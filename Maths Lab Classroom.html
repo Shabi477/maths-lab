@@ -3332,6 +3332,7 @@ String.fromCodePoint||function(){var t=String.fromCharCode,e=Math.floor,n=functi
   'use strict';
   const A=G.MathsLabAssessments, bank=A.bank, qids=bank.questions.map(q=>q.id);
   const headers=['Pupil ID','Pupil name',...qids];
+  const pupilHeaders=['Pupil number','Initials',...qids.map((_,i)=>'Q'+(i+1))];
   const codeLabels={'':'Not assessed','1':'Correct independently','0':'Needs practice','S':'Correct with maths help','R':'Teacher review needed'};
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const blank=()=>({answer:'',mark:'unassessed',help:'none',note:''});
@@ -3342,17 +3343,23 @@ String.fromCodePoint||function(){var t=String.fromCharCode,e=Math.floor,n=functi
   function summary(r){const codes=qids.map(id=>code(r?.responses[id]));return{correct:codes.filter(c=>c==='1').length,marked:codes.filter(c=>['1','0','S'].includes(c)).length,unassessed:codes.filter(c=>c==='').length,review:codes.filter(c=>c==='R').length,supported:codes.filter(c=>c==='S').length};}
   function validateRows(rows,pupils){
     if(!Array.isArray(rows)||rows.length<2)throw Error('The spreadsheet needs its header row and at least one pupil.');
-    if(rows[0].length!==headers.length||headers.some((h,i)=>String(rows[0][i]??'').replace(/^\uFEFF/,'').trim()!==h))throw Error('Keep the template headers in order: Pupil ID, Pupil name, then Q01 to Q40.');
-    const known=new Map(pupils.map(p=>[p.id,p])),seen=new Set(),changes=[],preview=[];
+    const matches=expected=>rows[0].length===expected.length&&expected.every((h,i)=>String(rows[0][i]??'').replace(/^\uFEFF/,'').trim()===h);
+    const numbered=matches(pupilHeaders);
+    if(!numbered&&!matches(headers))throw Error('Keep the downloaded template headers and question order.');
+    const known=new Map(),duplicates=new Set();
+    for(const p of pupils){const key=numbered?(p.studentId||p.id):p.id;if(known.has(key))duplicates.add(key);else known.set(key,p);}
+    const seen=new Set(),changes=[],preview=[];
     for(let i=1;i<rows.length;i++){
       const row=rows[i]||[];if(row.every(v=>!String(v??'').trim()))continue;
-      const id=String(row[0]??'').trim();
-      if(!known.has(id))throw Error(`Row ${i+1}: Pupil ID does not belong to the current class. Download its template first.`);
+      const key=String(row[0]??'').trim();
+      if(duplicates.has(key))throw Error(`Row ${i+1}: this pupil number is used more than once in the group. Give pupils distinct numbers first.`);
+      if(!known.has(key))throw Error(`Row ${i+1}: Pupil ID or number does not belong to the current class. Download its template first.`);
+      const id=known.get(key).id;
       if(seen.has(id))throw Error(`Row ${i+1}: this Pupil ID appears more than once.`);
       if(row.length>headers.length&&row.slice(headers.length).some(v=>String(v??'').trim()))throw Error(`Row ${i+1}: there are extra columns after Q40.`);
       seen.add(id);const values=[];
       for(let j=0;j<qids.length;j++){let value;try{value=normalise(row[j+2]);}catch{throw Error(`Row ${i+1}, ${qids[j]}: use 1, 0, S, R or blank.`);}values.push(value);changes.push({pupilId:id,questionId:qids[j],code:value});}
-      preview.push({id,name:known.get(id).name,sheetName:String(row[1]??''),entered:values.filter(Boolean).length,review:values.filter(v=>v==='R').length});
+      preview.push({id,name:known.get(key).name,sheetName:String(row[1]??''),entered:values.filter(Boolean).length,review:values.filter(v=>v==='R').length});
     }
     if(!preview.length)throw Error('The spreadsheet has no pupil rows to import.');
     return{changes,preview};
@@ -3448,7 +3455,7 @@ String.fromCodePoint||function(){var t=String.fromCharCode,e=Math.floor,n=functi
     document.addEventListener('change',event=>{if(event.target.id!=='assessment-grid-upload')return;const file=event.target.files[0];event.target.value='';if(file)h.task(()=>importFile(file));});
     return{render,handle};
   }
-  G.MathsLabAssessmentGrid={attach,normalise,code,summary,validateRows,pasteChanges,prepare,applyChanges,workbook,headers,csvCell};
+  G.MathsLabAssessmentGrid={attach,normalise,code,summary,validateRows,pasteChanges,prepare,applyChanges,workbook,headers,pupilHeaders,csvCell};
 })(globalThis);
 
 </script>
@@ -19628,6 +19635,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   const colours = { number: '#d3e4f8', algebra: '#ecd3f8', geometry: '#d4f5e7', ratio: '#fce8ca' };
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const CSS = `
+.ml-year .yo-public-term{padding:16px;margin:16px 0;border:1px solid var(--yo-line);border-radius:12px;background:#fff}.ml-year .yo-public-term h3{font-size:18px;font-weight:600;margin:0 0 12px}.ml-year .yo-public-review{font-size:14px;color:#6d6081;background:#f3eef9;padding:8px 12px;border:1px solid #ded6eb;border-radius:7px;margin:12px 0 0}
+
 .ml-year{--yo-ink:#3a4254;--yo-muted:#657184;--yo-line:#bccde0;color:var(--yo-ink);font:inherit;font-size:15px;line-height:1.45;max-width:100%;min-width:0}
 .ml-year,.ml-year *{box-sizing:border-box}
 .ml-year [hidden]{display:none!important}
@@ -19783,7 +19792,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     let tier = programme === 'classroom' && Object.hasOwn(tierDescriptions, options.tier) ? String(options.tier) : '';
     const descriptionId = 'yo-tier-' + (++renderId) + '-';
     container.innerHTML = '<section class="ml-year" data-programme="' + programme + '" aria-label="' + programmeLabel + ' year overview">'
-      + (school ? '<h2>The school year <span>' + escape(years[0] + '\u2013' + years[1].slice(2)) + '</span></h2>' : '<h2>Year 7 programmes</h2>')
+      + (school ? '<h2>The school year <span>' + escape(years[0] + '\u2013' + years[1].slice(2)) + '</span></h2>' : '<h2>Year overview</h2>')
       + (programme === 'classroom' ? '<section class="yo-class-pathways" aria-label="Class teaching pathway"><h3>What will your class study?</h3><p>Choose a pathway, then open a unit.</p><div class="yo-tier-options" role="group" aria-label="Choose the class teaching pathway">'
         + tierChoices.map(choice => '<div class="yo-tier-option"><button type="button" class="yo-tier-choice" data-tier="' + choice.tier + '" aria-pressed="' + (tier === choice.tier) + '" aria-describedby="' + descriptionId + choice.tier + '"><strong>Tier ' + choice.tier + '</strong><span class="yo-tier-band">' + choice.band + '</span><span>' + escape(choice.line) + '</span></button><span class="yo-tier-detail" role="tooltip" id="' + descriptionId + choice.tier + '">' + escape(tierDescriptions[choice.tier]) + '</span></div>').join('')
         + '</div><p class="yo-tier-status" role="status"></p><p class="yo-securing-note">' + escape(securingDescription) + '</p></section>' : '')
@@ -19800,6 +19809,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       + '<ul class="yo-key" aria-label="Year 7 units">' + data.units.map(unit => '<li><button type="button" class="yo-unit-link" data-unit="' + unit.unit + '"' + (!unit.available || !canOpen ? ' disabled aria-disabled="true"' : '') + ' aria-label="' + escape((unit.available && canOpen ? 'Open ' : '') + 'Unit ' + unit.unit + ': ' + unit.title + (unit.available ? '. ' + programmeLabel + ' lessons' : '. To come')) + '"><span class="yo-swatch" style="--yo-colour:' + colours[unit.strand] + '" aria-hidden="true"></span><span><strong>U' + unit.unit + '</strong> ' + escape(unit.title) + (!unit.available ? '<small>To come</small>' : programme === 'classroom' ? '<small class="yo-unit-summary"></small>' : '') + '</span></button></li>').join('') + '</ul>'
       + (programme === 'classroom' ? '<details class="yo-support"><summary>Additional support</summary><p>Extra support is planned separately from class teaching in Maths Lab Catch-up.</p><p><strong>Tier 2:</strong> a teacher-led extra lesson each week: one 50-minute meeting or two 25-minute meetings, focused on identified gaps.</p><p><strong>Tier 3:</strong> small-group step-back lessons taught by a TA or peer mentor; the teacher chooses the lessons.</p></details>' : '')
       + (school ? '<div class="yo-notes"><p><span class="yo-swatch" aria-hidden="true"></span>Lilac marks a unit test or assessment week. A1 / A2 = Assessment 1 / 2. Unit-test blocks open that unit\u2019s lessons.</p><p></p><p>Units 5\u20139: To come. </p></div>' : '<div class="yo-notes"><p>Choose the unit you are teaching. Units 5–9: To come.</p></div>') + '</section>';
+    if(!school){
+      // An undated example sequence uses our own unit order; school calendar data never enters this edition.
+      const key=container.querySelector('.yo-key'),cards=[...key.children],terms=doc.createElement('div');terms.className='yo-public-terms';
+      ['Autumn','Spring','Summer'].forEach((term,i)=>{
+        const section=doc.createElement('section');section.className='yo-public-term';
+        section.innerHTML='<h3>'+term+'</h3><ul class="yo-key" aria-label="'+term+' units"></ul><p class="yo-public-review">Assess and review when ready</p>';
+        cards.slice(i*3,i*3+3).forEach(card=>section.querySelector('ul').append(card));terms.append(section);
+      });key.replaceWith(terms);
+      container.querySelector('.yo-notes').innerHTML='<p>Suggested unit sequence: choose the timing to suit your school. Units 5–9: To come.</p>';
+    }
     const panel = container.firstElementChild;
     const unitLabels = new Map([...panel.querySelectorAll('[data-unit]')].map(button => [button, button.getAttribute('aria-label')]));
     let destroyed = false;
@@ -19825,7 +19844,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         '3':'Developing lessons at the class’s pace.'
       };
       status.textContent = tier ? 'Tier ' + tier + ': ' + programmes[tier] : 'No pathway selected. Unit links show all available lessons.';
-      panel.querySelector('.yo-intro').textContent = !school ? (tier ? 'Tier ' + tier + ': choose a unit to see the matching lessons.' : 'Choose a pathway to see each unit?s programme and lessons.') : (tier ? 'The calendar shows Tier ' + tier + ' class teaching. Open a unit for its listed lessons.' : 'Choose a pathway to see each unit’s programme and lessons.') + ' Dates are week commencing.';
+      panel.querySelector('.yo-intro').textContent = !school ? (tier ? 'Tier ' + tier + ': choose a unit to see the matching lessons.' : 'Choose a pathway to see each unit’s programme and lessons.') : (tier ? 'The calendar shows Tier ' + tier + ' class teaching. Open a unit for its listed lessons.' : 'Choose a pathway to see each unit’s programme and lessons.') + ' Dates are week commencing.';
       const summaries = new Map(data.units.filter(unit => unit.available).map(unit => [unit.unit, unitSummary(unit.unit)]));
       unitLabels.forEach((baseLabel, button) => {
         const summary = summaries.get(Number(button.dataset.unit));
@@ -21328,9 +21347,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     const v=existing||data.drafts[draftKey(l)]||{date:today(),score:'',outcome:'developing',support:'none',notes:!ui.review&&selectedSession(l)?selectedSession(l).title+'\nEvidence and help used: \nNext step: ':'',reviewDate:addDays(today(),14),explanation:false};
     return`<div class="form-section teacher-only"><h3>${existing?'Correct session record':'Record this session'} · ${esc(p.name)}</h3><p class="record-hint">Record mathematical help separately from access support. This record does not automatically mark the whole skill secure.</p><form class="record-form" data-form="record" data-lesson="${l.id}" ${existing?`data-session="${esc(existing.id)}"`:''}><div class="field-grid"><label>Date<input type="date" name="date" required value="${esc(v.date)}" max="${today()}" min="2000-01-01"></label><label>What did you see?<select name="outcome">${[['practice','Needs more practice'],['developing','Developing'],['independent','Independent today']].map(([x,t])=>`<option value="${x}" ${v.outcome===x?'selected':''}>${t}</option>`).join('')}</select></label><label>Check score (optional)<select name="score"><option value="">Not recorded</option>${[0,1,2,3,4,5].map(x=>`<option value="${x}" ${v.score!==null&&v.score!==''&&String(v.score)===String(x)?'selected':''}>${x} / 5</option>`).join('')}</select></label><label>Support used<select name="support">${['none','access','prompt','model'].map(x=>`<option value="${x}" ${v.support===x?'selected':''}>${supportLabel(x)}</option>`).join('')}</select></label><label class="full">Evidence and next step<textarea name="notes" maxlength="3000" placeholder="What could they do? Where did they need help?">${esc(v.notes)}</textarea></label><label>Next review (optional)<input type="date" name="reviewDate" min="2000-01-01" max="2100-12-31" value="${esc(v.reviewDate)}"></label><label class="check-label"><input type="checkbox" name="explanation" ${v.explanation?'checked':''}>Explanation or demonstration given</label></div><div class="row"><button class="btn primary" type="submit">${icon('check',17)}${existing?'Save correction':'Save session'}</button><span class="small">${existing?'Earlier session details will be updated.':'Notes are kept as a draft until you save this session.'}</span></div></form></div>`;
   }
-  function dialog(title,content,footer=''){releaseCurriculumPreview();const d=$('dialog');d.innerHTML=`<div class="dialog-heading"><h2 id="dialog-title">${esc(title)}</h2><button class="icon-btn" data-action="close-dialog" aria-label="Close dialog">${icon('close',21)}</button></div>${content}${footer?`<div class="dialog-footer">${footer}</div>`:''}`;if(!d.open)d.showModal();}
+  function dialog(title,content,footer=''){releaseCurriculumPreview();const d=$('dialog');d.innerHTML=`<div class="dialog-heading"><h2 id="dialog-title">${esc(title)}</h2><button class="icon-btn" data-action="close-dialog" aria-label="Close dialog">${icon('close',21)}</button></div>${content}${footer?`<div class="dialog-footer">${footer}</div>`:''}`;if(!d.open)d.showModal();d.querySelector('[autofocus]')?.focus();}
   function closeDialog(){$('dialog').close();}
-  function pupilDialog(id){const p=id?planner().pupils.find(x=>x.id===id):null;dialog(p?'Pupil details':'Add a pupil',`<form data-form="pupil" data-id="${esc(p?.id||'')}"><div class="field-grid"><label class="full">Pupil name or ID<input name="name" required maxlength="100" autocomplete="off" value="${esc(p?.name||'')}" autofocus></label><label>Pupil ID (optional)<input name="studentId" maxlength="100" value="${esc(p?.studentId||'')}"></label><label>Form / group<input name="group" maxlength="80" value="${esc(p?.group||currentClass().name)}"></label></div><div class="dialog-footer"><button class="btn primary" type="submit">${p?'Save pupil':'Add pupil'}</button></div></form>`);}
+  function pupilDialog(id){const p=id?planner().pupils.find(x=>x.id===id):null;dialog(p?'Pupil details':'Add a pupil',`<form data-form="pupil" data-id="${esc(p?.id||'')}"><div class="field-grid"><label class="full">Pupil name, initials or ID<input name="name" required maxlength="100" autocomplete="off" value="${esc(p?.name||'')}" autofocus></label><label>Pupil number (optional)<input name="studentId" maxlength="100" value="${esc(p?.studentId||'')}"></label><label>Form / group<input name="group" maxlength="80" value="${esc(p?.group||currentClass().name)}"></label></div><div class="dialog-footer"><button class="btn primary" type="submit">${p?'Save pupil':'Add pupil'}</button></div></form>`);}
   function classDialog(edit=false){const c=currentClass();dialog(edit?'Class details':'Create a class',`<form data-form="class" data-edit="${edit}"><div class="stack"><label>Class name<input name="name" required maxlength="80" value="${edit?esc(c.name):''}" autofocus></label><label>Teacher names (one per line)<textarea name="teachers" maxlength="1100">${edit?esc(c.teachers.join('\n')):''}</textarea></label></div><div class="dialog-footer"><button class="btn primary" type="submit">${edit?'Save details':'Create class'}</button></div></form>`);}
   function assignDialog(){if(!ui.selected.size)return;if(!named().length){pupilDialog();return;}dialog('Add lessons to a programme',`<p>${ui.selected.size} selected lesson${ui.selected.size===1?'':'s'}. Existing lesson choices will be kept.</p><form data-form="assign"><label>Add to<select name="target"><option value="current">${esc(pupil()?.name||'Current pupil')}</option><option value="selected" ${ui.selectedPupils.size?'selected':''}>Selected pupils (${ui.selectedPupils.size})</option><option value="class">Whole class (${named().length})</option></select></label><div class="dialog-list">${[...ui.selected].sort().map(id=>`<div class="row" style="padding:8px 0"><span class="tag">${id}</span>${esc(lessons.get(id)?.title)}</div>`).join('')}</div><div class="dialog-footer"><button class="btn primary" type="submit">Add lessons</button></div></form>`);}
   async function importRoster(file){importBook=await M.readSpreadsheet(file);await importSheet(0);}
@@ -21598,7 +21617,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   document.addEventListener('submit',e=>{const form=e.target.closest('form[data-form]');if(!form)return;e.preventDefault();task(async()=>{
     const v=new FormData(form);
     if(CU?.submit(form))return;
-    if(form.dataset.form==='pupil'){const name=String(v.get('name')||'').trim();if(!name)throw Error('Enter a pupil name or ID.');let p=planner().pupils.find(p=>p.id===form.dataset.id);if(!p){if(planner().pupils.length>=M.MAX_PUPILS)throw Error('This set of classes is full.');p=members().find(p=>!p.name&&!p.studentId&&!p.lessons.length);if(!p){p=M.blank(planner().activeClass);planner().pupils.push(p);}}p.name=name;p.studentId=String(v.get('studentId')||'').trim();p.group=String(v.get('group')||'').trim();planner().active=p.id;save();closeDialog();shell();toast('Pupil saved.');}
+    if(form.dataset.form==='pupil'){const name=String(v.get('name')||'').trim();if(!name)throw Error('Enter a pupil name or ID.');let p=planner().pupils.find(p=>p.id===form.dataset.id);if(!p){if(planner().pupils.length>=M.MAX_PUPILS)throw Error('This set of classes is full.');p=members().find(p=>!p.name&&!p.studentId&&!p.lessons.length);if(!p){p=M.blank(planner().activeClass);planner().pupils.push(p);}}p.name=name;p.studentId=String(v.get('studentId')||'').trim();p.group=String(v.get('group')||'').trim();planner().active=p.id;save();closeDialog();shell();toast(storageOK?'Pupil saved.':'Pupil added for this session. Save a backup before closing: this browser could not save the record.',!storageOK);}
     else if(form.dataset.form==='class'){if(form.dataset.edit==='true'){M.renameClass(planner(),v.get('name'));M.setTeachers(planner(),v.get('teachers'));}else M.addClass(planner(),v.get('name'),M.teacherNames(v.get('teachers')));ui.page='class';ui.selectedPupils.clear();save();closeDialog();shell();}
     else if(form.dataset.form==='assign'){const target=v.get('target'),ids=target==='class'?named().map(p=>p.id):target==='selected'?[...ui.selectedPupils]:[pupil().id];if(!ids.length)throw Error('Select at least one pupil in My class.');const r=M.assign(planner(),ids,[...ui.selected],[...lessons.keys()]);if(!r.pupils.length)throw Error('Choose a named pupil first.');ui.selected.clear();save();closeDialog();shell();toast(`${r.additions} lesson choices added across ${r.pupils.length} pupil${r.pupils.length===1?'':'s'}.`);}
     else if(form.dataset.form==='record'){const l=(form.dataset.session?recordLessons:lessons).get(form.dataset.lesson),p=pupil(),r=readRecord(form);if(!l)throw Error('Choose an available catch-up lesson.');if(!p?.name)throw Error('Choose a named pupil first.');if(!validDate(r.date)||r.date>today())throw Error('Choose today or an earlier session date.');if(r.reviewDate&&(!validDate(r.reviewDate)||r.reviewDate<r.date))throw Error('The review date must be on or after the session.');if(r.outcome==='independent'&&['prompt','model'].includes(r.support))throw Error('With mathematical prompts or modelling, record Developing or Needs more practice.');if(r.score!==''&&!/^[0-5]$/.test(r.score))throw Error('Choose a score from 0 to 5.');const record={...(form.dataset.session?data.sessions.find(s=>s.id===form.dataset.session&&s.pupilId===p.id):{}),...r,id:form.dataset.session||M.uid(),pupilId:p.id,lessonId:l.id,assessment:form.dataset.session?(data.sessions.find(s=>s.id===form.dataset.session)?.assessment||'check'):(ui.review?'review':'check'),score:r.score===''?null:Number(r.score),createdAt:new Date().toISOString()};if(form.dataset.session){const i=data.sessions.findIndex(s=>s.id===form.dataset.session&&s.pupilId===p.id);if(i<0)throw Error('Session not found.');data.sessions[i]=record;closeDialog();}else{if(data.sessions.length>=20000)throw Error('This record set has reached 20,000 sessions. Export a backup and continue in a separate set.');data.sessions.push(record);delete data.drafts[draftKey(l)];}save();if(ui.page==='lesson')renderLesson();else renderProgress();toast(storageOK?'Session saved. The whole-skill judgement remains yours.':'Session recorded. Download a backup before closing because device saving is unavailable.',!storageOK);}
