@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Maths Lab</title>
+  <style>/* Shared palette aliases for the front door. */
+:root{--white:#ffffff;--ground:#f1f3f7;--hair:#bccde0;--muted:#5a6172;--ink:#3a4254;--blue-wash:#e3e9f3;--blue-deep:#3b5b8a;--teal-wash:#ddf2f0;--teal-deep:#0b6159;--violet-wash:#ede7fa;--violet-deep:#52339a}
+* { box-sizing: border-box; }
+:root { font-family: Arial, Helvetica, sans-serif; color: var(--ink); background: var(--white); font-size: 16px; font-variant-numeric: tabular-nums; font-feature-settings: 'zero' 0; }
+body { margin: 0; line-height: 1.5; --ink: #3a4254; --hair: #bccde0; --blue-wash: #d3e4f8; --teal-wash: #d4f5e7; --violet-wash: #ecd3f8; color: var(--ink); }
+[hidden] { display: none !important; }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { line-height: 1.25; text-wrap: balance; font-weight: 600; }
+h1 { font-size: clamp(28px, 2.5vw, 32px); letter-spacing: -.025em; }
+h2 { font-size: 22px; letter-spacing: -.015em; }
+h3 { font-size: 20px; }
+a { color: var(--blue-deep); text-underline-offset: .2em; }
+a, button, summary { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--blue-deep); outline-offset: 4px; }
+h1:focus, .unit-detail > h2:focus { outline: none; }
+.front-door { max-width: 1240px; margin: auto; padding: 36px 32px 24px; }
+.welcome { margin-bottom: 32px; }
+.welcome-top { display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 12px; }
+.welcome-top .brand-mark { margin: 0; }
+.welcome-top .how-link { margin: 0; }
+.brand-mark { display: flex; gap: 5px; margin-bottom: 16px; }
+.brand-mark span { height: 8px; width: 28px; border-radius: 2px; background: var(--teal-deep); }
+.brand-mark span:nth-child(2) { background: var(--blue-deep); }
+.brand-mark span:nth-child(3) { background: var(--violet-deep); }
+.intro { font-size: 16px; line-height: 1.6; max-width: 52rem; margin-top: 12px; color: var(--muted); }
+.doors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.classroom { --role: var(--teal-deep); --wash: var(--teal-wash); }
+.catchup { --role: var(--blue-deep); --wash: var(--blue-wash); }
+.explore { --role: var(--violet-deep); --wash: var(--violet-wash); }
+.door { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: 24px; border: 1.5px solid var(--hair); border-top: 2px solid var(--role); border-radius: 12px; color: var(--ink); text-decoration: none; background:color-mix(in srgb,var(--wash) 65%,white); }
+.door:hover { background: var(--wash); }
+.door h2 { color: var(--ink); font-size: 22px; font-weight: 600; }
+.door p { font-size: 16px; }
+.door-icon { width: 36px; height: 36px; stroke: var(--role); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.door-arrow { color: var(--role); margin-top: auto; font-size: 1.7rem; line-height: 1; }
+.how-link { display: inline-flex; align-items: center; gap: 16px; min-height: 52px; margin-top: 18px; font-size:15px; font-weight: 500; }
+.guide { max-width: 1280px; margin: auto; }
+.guide-bar { position: sticky; top: 0; z-index: 5; padding: 10px 32px 12px; background: var(--white); border-bottom: 1px solid var(--hair); }
+.back-home { display: inline-flex; align-items: center; gap: 12px; min-height: 48px; font-size:15px; font-weight: 500; }
+.guide-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.guide-nav a { display: inline-flex; align-items: center; min-height: 48px; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size:15px; font-weight: 500; }
+.guide-nav a:hover { background: var(--ground); }
+.guide-nav a[aria-current='page'] { background: var(--blue-wash); color: var(--blue-deep); }
+.guide-content { padding: 28px 32px 64px; }
+.page-intro { margin-top: 12px; max-width: 58rem; color: var(--muted); font-size: 16px; }
+.guide-explanation { margin-top: 14px; max-width: 64rem; font-size: 16px; color: var(--ink); }
+.guide-help-title { margin: 28px 0 14px; font-size: 22px; }
+.guide-help { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; list-style: none; margin: 0; padding: 0; }
+.guide-help > li { padding: 18px; border: 1px solid var(--hair); border-radius: 10px; background: #eff4fa; }
+.guide-help > li:nth-child(2) { background: #f4ebfa; }
+.guide-help > li:nth-child(3) { background: #eaf7f1; }
+.guide-help h3 { margin-bottom: 9px; font-size: 17px; line-height: 1.4; text-wrap: wrap; }
+.guide-help p { font-size: 16px; line-height: 1.5; }
+.threshold-help { margin-top: 22px; }
+.role-choices { display:flex; flex-wrap:wrap; gap:8px; margin:24px 0; }
+.role-choices button { min-height:48px; border:1.5px solid var(--hair); border-radius:8px; background:var(--white); color:var(--ink); padding:10px 16px; font:inherit; font-size:15px; cursor:pointer; }
+.role-choices button[aria-pressed='true'] { background:var(--blue-wash); border-color:#89a9d0; }
+.role-detail { border:1.5px solid var(--hair); border-radius:12px; padding:24px; background:#f7f9fc; }
+.role-detail h2 { font-size:22px; }
+.role-summary { margin:8px 0 20px; }
+.role-steps { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 32px; list-style:none; counter-reset:steps; padding:0; margin:0; }
+.role-steps li { counter-increment:steps; }
+.role-steps h3 { font-size:17px; margin-bottom:8px; text-wrap:wrap; }
+.role-steps h3::before { content:counter(steps) '. '; color:var(--blue-deep); }
+.role-steps p { font-size:16px; }
+.guide-action { display:inline-flex; align-items:center; min-height:48px; min-width:48px; margin-top:18px; gap:12px; font-size:15px; }
+.guide-note { margin-top:20px; border-bottom:1px solid var(--hair); }
+.guide-note summary { min-height:48px; padding:12px 0; cursor:pointer; }
+.guide-note p { margin:8px 0 16px; }
+.method-routine { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; padding:0; margin:0; list-style:none; counter-reset:methods; }
+.method-routine li { counter-increment:methods; border:1px solid var(--hair); border-radius:10px; padding:18px; background:#eff4fa; }
+.method-routine li:nth-child(3n + 2) { background:#f4ebfa; }
+.method-routine li:nth-child(3n) { background:#eaf7f1; }
+.method-routine h3 { font-size:17px; margin-bottom:8px; text-wrap:wrap; }
+.method-routine h3::before { content:counter(methods) '. '; }
+.method-topic { border-bottom:1px solid var(--hair); }
+.method-topic summary { min-height:54px; padding:14px 8px; cursor:pointer; font-size:17px; font-weight:600; }
+.method-unit { display:inline-block; margin-right:16px; color:var(--muted); font-size:14px; font-weight:400; }
+.method-topic > div { padding:0 24px 18px; max-width:64rem; }
+.method-topic p + p { margin-top:10px; }
+@media(max-width:860px) { .role-steps,.method-routine { grid-template-columns:1fr; } .role-detail { padding:18px; } }
+.unit-strip { display: grid; grid-template-columns: var(--unit-columns, repeat(9, minmax(0, 1fr))); gap: 8px; margin: 26px 0; }
+.unit-button { display: flex; flex-direction: column; text-align: left; align-items: flex-start; gap: 10px; min-width: 0; padding: 14px 10px; background: var(--white); border: 1px solid var(--hair); border-radius: 8px; color: var(--ink); font: inherit; cursor: pointer; }
+.unit-button:hover { border-color: var(--blue-deep); }
+.unit-button[aria-pressed='true'] { background: var(--blue-wash); border-color: var(--blue-deep); }
+.unit-number { color: var(--ink); font-size:15px; font-weight: 550; }
+.unit-name { overflow-wrap: normal; }
+.unit-status { margin-top: auto; color: var(--muted); font-size:14px; }
+.unit-detail { border-top: 1px solid var(--hair); padding-top: 22px; }
+.unit-detail > p { margin-top: 12px; color: var(--muted); }
+.blocks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 40px; margin-top: 24px; }
+.unit-detail > h2 { font-size: 1.35rem; }
+.block h3 { margin: 0 0 10px; font-size: 1.11rem; line-height: 1.4; }
+.block ol { list-style: none; margin: 0; padding: 0; }
+.lesson { display: flex; align-items: baseline; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--hair); }
+.lesson-number { flex: 0 0 1.5em; color: var(--muted); }
+.concept { border-bottom: 1px solid var(--hair); padding: 4px 0; }
+.concept:first-of-type { margin-top: 18px; }
+.concept summary { min-height: 56px; padding: 13px 8px; cursor: pointer; font-weight: 600; font-size: 1.11rem; }
+.concept summary:hover { background: var(--ground); }
+.concept-body { padding: 4px 28px 20px; }
+.concept-words { color: var(--muted); max-width: 54rem; margin-bottom: 18px; }
+.concept-body h3 { font-size: 1rem; margin: 16px 0 8px; }
+.concept-body ul { margin: 0; padding-left: 1.2rem; columns: 2; column-gap: 40px; }
+.concept-body li { padding: 6px 0; break-inside: avoid; }
+.lesson-code { display: block; color: var(--muted); }
+[data-page='flow'] .page-intro { max-width: 64rem; color: var(--ink); }
+.programme-step { display: grid; grid-template-columns: 180px minmax(0, 1fr) auto; gap: 18px; align-items: baseline; padding: 18px 20px; border: 1px solid var(--hair); border-radius: 12px; background: var(--ground); }
+.programme-step:first-of-type { margin-top: 26px; }
+.programme-step h2 { font-size: 1.11rem; line-height: 1.4; letter-spacing: 0; text-wrap: wrap; }
+.programme-who { white-space: nowrap; }
+.programme-arrow { margin: 6px 0; text-align: center; color: var(--muted); font-size: 1.4rem; line-height: 1; }
+.programme-table, .programme-band { width: 100%; table-layout: fixed; border: 1px solid var(--hair); border-spacing: 0; border-radius: 12px; background: var(--white); text-align: left; }
+.programme-table .programme-label-column { width: 170px; }
+.programme-table th, .programme-table td { padding: 14px 16px; vertical-align: top; }
+.programme-table tr > * + * { border-left: 1px solid var(--hair); }
+.programme-table tbody tr > * { border-top: 1px solid var(--hair); }
+.programme-table th, .programme-corner, .programme-band th { background: #eff4fa; font-weight: 550; }
+.programme-table thead th, .programme-band thead th { font-size: 18px; font-weight: 600; }
+.programme-table thead th:nth-child(2), #mobile-band-96 { background:#d3e4f8; }
+.programme-table thead th:nth-child(3), #mobile-band-90 { background:#ecd3f8; }
+.programme-table thead th:nth-child(4), #mobile-band-below { background:#d4f5e7; }
+.programme-table thead tr > :first-child { border-top-left-radius: 11px; }
+.programme-table thead tr > :last-child { border-top-right-radius: 11px; }
+.programme-table tbody tr:last-child > :first-child { border-bottom-left-radius: 11px; }
+.programme-table tbody tr:last-child > :last-child { border-bottom-right-radius: 11px; }
+.programme-what, .programme-app { font-weight: 550; }
+.programme-detail { margin-top: 4px; font-weight: 400; }
+.programme-by { display: block; margin-top: 8px; }
+.programme-app { color: var(--ink); }
+.programme-mobile { display: none; }
+.programme-section-title { margin: 28px 0 14px; font-size: 22px; }
+.programme-roles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.programme-roles article { border: 1px solid var(--hair); border-radius: 12px; }
+.programme-roles h3 { padding: 14px 18px; border-bottom: 1px solid var(--hair); border-radius: 11px 11px 0 0; background: var(--ground); font-size: 1.11rem; line-height: 1.4; letter-spacing: 0; text-wrap: wrap; }
+.programme-roles ul { margin: 0; padding: 14px 20px 18px 38px; }
+.programme-roles li + li { margin-top: 6px; }
+.no-script { margin: 24px; }
+@media (max-width: 1050px) {
+  .unit-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .unit-button { padding: 14px; }
+  .door { padding: 20px; }
+}
+@media (max-width: 860px) {
+  .programme-step { grid-template-columns: 1fr; gap: 8px; }
+  .programme-who { white-space: normal; }
+  .programme-table { display: none; }
+  .programme-mobile { display: grid; gap: 22px; }
+  /* Explicit roles and header IDs preserve table relationships in the stacked layout. */
+  .programme-band, .programme-band thead, .programme-band tbody, .programme-band tr, .programme-band th, .programme-band td { display: block; }
+  .programme-band thead th { padding: 18px; border-radius: 11px 11px 0 0; }
+  .programme-band tbody tr { border-top: 1px solid var(--hair); }
+  .programme-band tbody th { padding: 10px 18px; border-bottom: 1px solid var(--hair); }
+  .programme-band tbody td { padding: 14px 18px 18px; }
+  .programme-roles { grid-template-columns: 1fr; }
+  .guide-help { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .front-door { padding: 24px 20px; }
+  .welcome { margin-bottom: 26px; }
+  .doors { grid-template-columns: 1fr; gap: 16px; }
+  .door { gap: 14px; padding: 22px; }
+  .door-icon { width: 36px; height: 36px; }
+  .door-arrow { align-self: flex-end; }
+  .guide-bar { padding: 8px 16px; }
+  .guide-nav { gap: 4px; }
+  .guide-nav a { padding: 8px 10px; }
+  .guide-content { padding: 24px 20px 44px; }
+  .unit-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .unit-button { padding: 14px 8px; }
+  .blocks { grid-template-columns: 1fr; gap: 24px; }
+  .concept-body { padding-left: 12px; padding-right: 8px; }
+  .concept-body ul { columns: 1; }
+}
+@media (max-width: 360px) {
+  .unit-strip { grid-template-columns: 1fr; }
+  .unit-button { display: grid; grid-template-columns: 64px 1fr; align-items: baseline; }
+  .unit-status { grid-column: 2; }
+}
+@media (forced-colors: active) {
+  .unit-button[aria-pressed='true'], .guide-nav a[aria-current='page'] { outline: 3px solid Highlight; outline-offset: -4px; }
+  .door-icon { stroke: LinkText; }
+}
+.programme-band-range { display: block; margin-top: 2px; font-size: 14px; font-weight: 400; color: var(--muted); }
+
+.publication-credit{max-width:1040px;margin:12px auto;padding:0 24px 8px;color:#586a80;font-size:14px;line-height:1.5}.publication-credit p{margin:5px 0}.publication-credit a{color:#3c658b;display:inline-flex;align-items:center;min-height:48px;vertical-align:middle}
+
+/* Maths Lab's shared app interface. Embedded last by all three app builders.
+   Only named interface elements are styled. Teaching text, mathematical tools,
+   board/pupil views, printing, control target sizes and navigation layouts keep
+   their existing rules. Programme and mathematical role colours remain distinct. */
+:root {
+  --ml-font: Arial, Helvetica, sans-serif;
+  --ml-ink: #2f3d52;
+  --ml-muted: #53647b;
+  --ml-line: #a4b7ce;
+  --ml-ground: #f5f7fa;
+  --ml-blue: #d3e4f8;
+  --ml-mint: #d4f5e7;
+  --ml-violet: #ecd3f8;
+  --ml-peach: #fce8ca;
+  --ml-radius: 9px;
+  --ml-heading: 28px;
+  --ml-control: 15px;
+}
+@media screen {
+  body.board :is(.board-top,.board-side,.board-pill) { font-family:var(--ml-font); }
+  body:not(.board):not(.pupil-mode) :is(
+    .front-door,.guide,.ex-top,.ex-home,.ex-bar,.ex-dialog-head,
+    .sidebar,.topbar,.catchup-header,.catchup-context,.catchup-footer,
+    .page-intro,.lesson-top,.assigning,.ml-year
+  ) { font-family:var(--ml-font); color:var(--ml-ink); }
+
+  body:not(.board):not(.pupil-mode) :is(
+    .welcome>h1,.guide-content>section>h1,.ex-hero>h1,
+    .page-intro>h1,.lesson-top h1,.assign-header>h1,.ml-year>h2
+  ) { font-size:var(--ml-heading); font-weight:600; line-height:1.25; letter-spacing:-.025em; color:var(--ml-ink); }
+
+  body:not(.board):not(.pupil-mode) :is(
+    .door>h2,.ex-home>h2,.assign-side>h2,.panel>h2,.dialog-heading>h2
+  ) { font-size:20px; font-weight:600; line-height:1.3; color:var(--ml-ink); }
+
+  body:not(.board):not(.pupil-mode) :is(
+    .classroom-lesson-card>strong,.assign-lesson-title,.assign-week-lesson>label,.ex-card .name
+  ) { font-weight:600; color:var(--ml-ink); }
+  body:not(.board):not(.pupil-mode) .ex-card .name { font-size:16px; }
+
+  body:not(.board):not(.pupil-mode) :is(
+    .welcome>.intro,.guide-content>section>.page-intro,.page-intro>p,
+    .ex-hero>p,.assign-header>p,.ml-year>.yo-intro
+  ) { font-size:16px; line-height:1.5; color:var(--ml-muted); }
+
+  /* Keep link-like controls and dismiss/close buttons quiet. No height or width overrides. */
+  body:not(.board):not(.pupil-mode) :is(
+    .toolbar,.lesson-actions,.lesson-footer,.classroom-library-toolbar,.classroom-library-tools,
+    .assign-links,.assign-footer,.assign-actions,.catchup-test-list,.dialog-footer,.today-card,.exit-strip
+  ) .btn:not(.quiet):not(.ghost):not([data-action*="dismiss"]):not([data-action*="close"]),
+  body:not(.board):not(.pupil-mode) :is(
+    .ex-btn,.ex-chip,.classroom-filters button,.yo-filter button,
+    .assign-routes button,.assign-group,.unit-strip button
+  ) {
+    font-family:var(--ml-font); font-size:var(--ml-control); font-weight:500;
+    line-height:1.35; color:var(--ml-ink); border-color:var(--ml-line);
+    border-width:1.5px; border-radius:var(--ml-radius); box-shadow:none;
+  }
+
+  body:not(.board):not(.pupil-mode) :is(
+    .toolbar,.lesson-actions,.lesson-footer,.classroom-library-toolbar,.classroom-library-tools,
+    .assign-links,.assign-footer,.assign-actions,.catchup-test-list,.dialog-footer,.today-card,.exit-strip
+  ) .btn.primary:not(.quiet):not(.ghost),
+  body:not(.board):not(.pupil-mode) .panel > .btn.primary,
+  body:not(.board):not(.pupil-mode) :is(
+    .ex-btn.primary,.ex-chip[aria-pressed=true],.classroom-filters button[aria-pressed=true],
+    .yo-filter button[aria-pressed=true],.assign-routes button[aria-pressed=true],
+    .assign-group[aria-pressed=true],.guide-nav a[aria-current=page]
+  ) { background:var(--ml-blue); color:var(--ml-ink); border-color:var(--ml-line); }
+
+  body:not(.board):not(.pupil-mode) :is(
+    .ex-chip[aria-pressed=true],.classroom-filters button[aria-pressed=true],
+    .yo-filter button[aria-pressed=true],.assign-routes button[aria-pressed=true]
+  ) { font-weight:600; }
+
+  body:not(.board):not(.pupil-mode) :is(
+    .toolbar input,.toolbar select,.classroom-unit-picker select,.catchup-context select,
+    .assigning select,.assigning input[type=search]
+  ) { font-family:var(--ml-font); font-size:14px; color:var(--ml-ink); border-color:var(--ml-line); border-radius:8px; }
+
+  body:not(.board):not(.pupil-mode) :is(
+    .door,.ex-card,.classroom-lesson-card,.catchup-choice,.assign-side,.assign-panel,.assign-week-lesson,.yo-term
+  ) { border-color:var(--ml-line); border-width:1.5px; border-radius:10px; box-shadow:none; }
+
+  body:not(.board):not(.pupil-mode) :is(.topbar,.catchup-header,.guide-bar,.ex-top) {
+    background:#fff; border-color:var(--ml-line);
+  }
+  body:not(.board):not(.pupil-mode) :is(
+    .how-link,.back-home,.guide-nav a,.catchup-nav button,.catchup-records,
+    .ex-note,.ex-foot,.ex-row-label,.ex-dialog-head button
+  ) { font-family:var(--ml-font); font-size:15px; color:var(--ml-ink); }
+
+  body:not(.board):not(.pupil-mode) :is(.classroom-filters,.assign-selection,.ex-code,.yo-term) {
+    background:var(--ml-ground);
+  }
+  body:not(.board):not(.pupil-mode) .ml-year {
+    --yo-ink:var(--ml-ink); --yo-muted:var(--ml-muted); --yo-line:var(--ml-line);
+  }
+  body:not(.board):not(.pupil-mode) :is(.nav-btn,.assigning label),
+  body.classroom:not(.board):not(.pupil-mode) .classroom-block h3 { color:var(--ml-ink); }
+  body:not(.board):not(.pupil-mode) :is(.classroom-card-goal,.assigning .small,.ex-card .line) { color:var(--ml-muted); }
+  body:not(.board):not(.pupil-mode) .guide { --ink:var(--ml-ink); --hair:var(--ml-line); --muted:var(--ml-muted); }
+
+  /* The entry page has more presence; teaching interfaces keep their compact scale. */
+  body:not(.board):not(.pupil-mode) .front-door { --ink:var(--ml-ink); --hair:var(--ml-line); }
+  body:not(.board):not(.pupil-mode) .front-door .welcome>h1 { font-size:38px; font-weight:700; }
+  body:not(.board):not(.pupil-mode) .front-door .welcome>.intro { font-size:18px; color:var(--ml-muted); }
+  body:not(.board):not(.pupil-mode) .front-door .door {
+    border-width:2px; border-color:var(--door-edge); padding:26px;
+    background:color-mix(in srgb,var(--wash) 80%,white);
+  }
+  body:not(.board):not(.pupil-mode) .front-door .door.classroom { --door-edge:#83b8aa; }
+  body:not(.board):not(.pupil-mode) .front-door .door.catchup { --door-edge:#89a9d0; }
+  body:not(.board):not(.pupil-mode) .front-door .door.explore { --door-edge:#aa90c8; }
+  body:not(.board):not(.pupil-mode) .front-door .door:hover { background:var(--wash); border-color:var(--role); }
+  body:not(.board):not(.pupil-mode) .front-door .door>h2 { font-size:24px; font-weight:600; }
+  body:not(.board):not(.pupil-mode) .front-door .door>p { font-size:18px; line-height:1.55; }
+  body:not(.board):not(.pupil-mode) .front-door .door-icon { width:42px; height:42px; stroke-width:1.9; }
+  body:not(.board):not(.pupil-mode) .front-door .how-link { font-size:16px; font-weight:600; }
+}
+@media screen and (max-width:760px) {
+  body:not(.board):not(.pupil-mode) .front-door .welcome>h1 { font-size:34px; }
+  body:not(.board):not(.pupil-mode) .front-door .door { padding:22px; }
+}
+</style>
+</head>
+<body>
+  <main>
+    <section id="front-door" class="front-door" aria-labelledby="home-title">
+      <header class="welcome">
+        <div class="welcome-top">
+          <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+          <a id="how-link" class="how-link" href="#using">How Maths Lab works <span aria-hidden="true">→</span></a>
+        </div>
+        <h1 id="home-title" tabindex="-1">Maths Lab</h1>
+        <p class="intro">Year 7 maths: the lessons, the step back when a pupil needs it, and the tools to see it.</p>
+      </header>
+      <nav class="doors" aria-label="Choose your Maths Lab app">
+        <a class="door classroom" href="Maths Lab Classroom.html">
+          <svg class="door-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 8h34v25H7zM24 33v8M15 41h18M14 17h20M14 24h12"/></svg>
+          <h2>Maths Lab Classroom</h2>
+          <p>For the class teacher, on the board. The unit lessons with Show it, Checkpoints, practice sheets and PowerPoint.</p>
+          <span class="door-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="door catchup" href="Maths Lab Catch-up.html">
+          <svg class="door-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 39h11V28h11V17h12M31 7h10v10"/></svg>
+          <h2>Maths Lab Catch-up</h2>
+          <p>For the head of department, the teacher and the TA. Plan, teach, check and track step-back lessons for the pupils who need them.</p>
+          <span class="door-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="door explore" href="Maths Lab Explore.html">
+          <svg class="door-icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="15" cy="15" r="8"/><path d="M29 7h13v16H29zM7 40l10-16 10 16zM34 32h8M38 28v8"/></svg>
+          <h2>Maths Lab Explore</h2>
+          <p>For pupils. The manipulatives on their own. Nothing is saved.</p>
+          <span class="door-arrow" aria-hidden="true">→</span>
+        </a>
+      </nav>
+    </section>
+
+    <div id="guide" class="guide" hidden>
+      <header class="guide-bar">
+        <a id="back-home" class="back-home" href="#home"><span aria-hidden="true">←</span> Back to the front door</a>
+        <nav class="guide-nav" aria-label="How Maths Lab works">
+          <a href="#using">Using the apps</a>
+          <a href="#curriculum">The curriculum</a>
+          <a href="#flow">How the programme works</a>
+          <a href="#thresholds">Threshold concepts</a>
+          <a href="#methods">Teaching methods</a>
+        </nav>
+      </header>
+      <div class="guide-content">
+        <section data-page="using" aria-labelledby="using-title" hidden>
+          <h1 id="using-title" tabindex="-1">Using Maths Lab</h1>
+          <p id="using-intro" class="page-intro"></p>
+          <div id="role-choices" class="role-choices" role="group" aria-label="Your role"></div>
+          <article id="role-detail" class="role-detail" aria-live="polite"></article>
+          <details class="guide-note"><summary>Records and availability</summary><p id="guidance-records"></p><p id="guidance-availability"></p></details>
+        </section>
+        <section data-page="methods" aria-labelledby="methods-title" hidden>
+          <h1 id="methods-title" tabindex="-1">Teaching methods</h1>
+          <p class="page-intro">Keep the representation, explanation and written method connected. Follow the authored lesson and use the pupil's response to decide the next step.</p>
+          <h2 class="guide-help-title">The lesson routine</h2>
+          <ol id="method-routine" class="method-routine"></ol>
+          <h2 class="guide-help-title">By topic</h2>
+          <div id="method-topics"></div>
+        </section>
+        <section data-page="curriculum" aria-labelledby="curriculum-title" hidden>
+          <h1 id="curriculum-title" tabindex="-1">The curriculum</h1>
+          <p class="page-intro">Nine units follow the Maths Lab teaching order. Classroom provides the Classroom lessons; Catch-up targets the current unit or earlier skills a pupil needs. Choose a unit to see its lessons.</p>
+          <div id="curriculum-units" class="unit-strip" role="group" aria-label="Year 7 units"></div>
+          <div id="curriculum-detail" class="unit-detail"></div>
+        </section>
+
+        <section data-page="flow" aria-labelledby="flow-title" hidden>
+          <h1 id="flow-title" tabindex="-1">How the programme works</h1>
+          <p class="page-intro">Every pupil learns in a class, and the class always moves on; some also have extra support. Aim: caught up by Year 8.</p>
+          <p class="guide-explanation">Classroom keeps the class on the current unit; Catch-up organises extra teaching for identified gaps. The tier determines the support offered. Assessment evidence and the teacher's judgement determine which lessons each pupil needs.</p>
+          <div class="programme-step">
+            <h2>Start of Year 7</h2>
+            <p>Pupils sorted by KS2 scaled score, with the Sparx baseline. 100 and above: secondary ready, your school’s lessons, no catch-up.</p>
+            <p class="programme-who">Head of department</p>
+          </div>
+          <div class="programme-arrow" aria-hidden="true">↓</div>
+          <table class="programme-table" aria-label="What each group does">
+            <colgroup><col class="programme-label-column"><col><col><col></colgroup>
+            <thead><tr>
+              <td class="programme-corner"></td>
+              <th id="band-96" scope="col">Tier 1<div class="programme-band-range">KS2 96 to 99</div></th>
+              <th id="band-90" scope="col">Tier 2<div class="programme-band-range">KS2 90 to 95</div></th>
+              <th id="band-below" scope="col">Tier 3<div class="programme-band-range">KS2 below 90</div></th>
+            </tr></thead>
+            <tbody>
+              <tr data-row="first">
+                <th id="programme-first" scope="row">First</th>
+                <td headers="programme-first band-96"><span class="programme-none">Nothing extra</span></td>
+                <td headers="programme-first band-90"><div class="programme-what">Readiness test</div><div class="programme-detail">Aims the extra lessons.</div><span class="programme-by">Teacher</span></td>
+                <td headers="programme-first band-below"><div class="programme-what">Starting assessment</div><div class="programme-detail">Finds the gaps; each question names its lesson.</div><span class="programme-by">Teacher</span></td>
+              </tr>
+              <tr data-row="class">
+                <th id="programme-class" scope="row">In class</th>
+                <td headers="programme-class band-96"><div class="programme-what">Your school’s lessons</div><div class="programme-detail">Each unit opens with 2 or 3 Developing lessons from <span class="programme-app classroom">Maths Lab Classroom</span>.</div></td>
+                <td headers="programme-class band-90"><div class="programme-app programme-what classroom">Maths Lab Classroom</div><div class="programme-detail">Developing; Securing work for the higher sets.</div></td>
+                <td headers="programme-class band-below"><div class="programme-app programme-what classroom">Maths Lab Classroom</div><div class="programme-detail">Developing.</div></td>
+              </tr>
+              <tr data-row="after">
+                <th id="programme-after" scope="row">After teaching<div class="programme-detail">Teacher notes who missed it</div></th>
+                <td headers="programme-after band-96"><div class="programme-what">Exit ticket</div><div class="programme-detail">The matching Classroom lesson's. Gaps picked up next lesson. Three misses in a unit: watched closely for Tier 2.</div></td>
+                <td headers="programme-after band-90"><div class="programme-what">Exit ticket</div><div class="programme-detail">The gaps go into the week's extra lesson.</div></td>
+                <td headers="programme-after band-below"><div class="programme-what">Exit ticket</div><div class="programme-detail">Gaps picked up next lesson.</div></td>
+              </tr>
+              <tr data-row="support">
+                <th id="programme-support" scope="row">Extra support</th>
+                <td headers="programme-support band-96"><span class="programme-none">None: monitored through the unit tests</span></td>
+                <td headers="programme-support band-90"><div class="programme-what">An extra group lesson: 1 × 50 or 2 × 25 minutes a week</div><div class="programme-detail">A fixed group, for at least a term. Each week closes the gaps the exit tickets show.</div><span class="programme-by">Teacher</span></td>
+                <td headers="programme-support band-below"><div class="programme-what">Small groups: the step-back plan in <span class="programme-app catchup">Maths Lab Catch-up</span></div><div class="programme-detail">A fixed group, for at least a term; 25 or 35 minutes. After each: 2 right, next lesson · 1 right, more practice · 0 right, a smaller step.</div><span class="programme-by">TA or peer mentor; teacher sets the lessons</span></td>
+              </tr>
+              <tr data-row="homework">
+                <th id="programme-homework" scope="row">Homework</th>
+                <td colspan="3" headers="programme-homework band-96 band-90 band-below"><div class="programme-what">Sparx, as the school sets it</div></td>
+              </tr>
+              <tr data-row="unit">
+                <th id="programme-unit" scope="row">Each unit</th>
+                <td headers="programme-unit band-96"><div class="programme-what">Your school’s unit test</div></td>
+                <td headers="programme-unit band-90"><div class="programme-what">Maths Lab unit test</div><div class="programme-detail">Section B tests the Securing objectives.</div></td>
+                <td headers="programme-unit band-below"><div class="programme-what">Maths Lab unit test</div><div class="programme-detail">Section B tests the Securing objectives.</div></td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- Phone tables keep each band in reading order, with real row and column headers. -->
+          <div class="programme-mobile">
+            <table class="programme-band" role="table" aria-labelledby="mobile-band-96">
+              <thead role="rowgroup"><tr role="row">
+                <th id="mobile-band-96" scope="col" colspan="2" role="columnheader">Tier 1<div class="programme-band-range">KS2 96 to 99</div></th>
+              </tr></thead>
+              <tbody role="rowgroup">
+                <tr data-row="first" role="row">
+                  <th id="mobile-96-first" scope="row" role="rowheader">First</th>
+                  <td headers="mobile-96-first mobile-band-96" role="cell"><span class="programme-none">Nothing extra</span></td>
+                </tr>
+                <tr data-row="class" role="row">
+                  <th id="mobile-96-class" scope="row" role="rowheader">In class</th>
+                  <td headers="mobile-96-class mobile-band-96" role="cell"><div class="programme-what">Your school’s lessons</div><div class="programme-detail">Each unit opens with 2 or 3 Developing lessons from <span class="programme-app classroom">Maths Lab Classroom</span>.</div></td>
+                </tr>
+                <tr data-row="after" role="row">
+                  <th id="mobile-96-after" scope="row" role="rowheader">After teaching<div class="programme-detail">Teacher notes who missed it</div></th>
+                  <td headers="mobile-96-after mobile-band-96" role="cell"><div class="programme-what">Exit ticket</div><div class="programme-detail">The matching Classroom lesson's. Gaps picked up next lesson. Three misses in a unit: watched closely for Tier 2.</div></td>
+                </tr>
+                <tr data-row="support" role="row">
+                  <th id="mobile-96-support" scope="row" role="rowheader">Extra support</th>
+                  <td headers="mobile-96-support mobile-band-96" role="cell"><span class="programme-none">None: monitored through the unit tests</span></td>
+                </tr>
+                <tr data-row="homework" role="row">
+                  <th id="mobile-96-homework" scope="row" role="rowheader">Homework</th>
+                  <td headers="mobile-96-homework mobile-band-96" role="cell"><div class="programme-what">Sparx, as the school sets it</div></td>
+                </tr>
+                <tr data-row="unit" role="row">
+                  <th id="mobile-96-unit" scope="row" role="rowheader">Each unit</th>
+                  <td headers="mobile-96-unit mobile-band-96" role="cell"><div class="programme-what">Your school’s unit test</div></td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="programme-band" role="table" aria-labelledby="mobile-band-90">
+              <thead role="rowgroup"><tr role="row">
+                <th id="mobile-band-90" scope="col" colspan="2" role="columnheader">Tier 2<div class="programme-band-range">KS2 90 to 95</div></th>
+              </tr></thead>
+              <tbody role="rowgroup">
+                <tr data-row="first" role="row">
+                  <th id="mobile-90-first" scope="row" role="rowheader">First</th>
+                  <td headers="mobile-90-first mobile-band-90" role="cell"><div class="programme-what">Readiness test</div><div class="programme-detail">Aims the extra lessons.</div><span class="programme-by">Teacher</span></td>
+                </tr>
+                <tr data-row="class" role="row">
+                  <th id="mobile-90-class" scope="row" role="rowheader">In class</th>
+                  <td headers="mobile-90-class mobile-band-90" role="cell"><div class="programme-app programme-what classroom">Maths Lab Classroom</div><div class="programme-detail">Developing; Securing work for the higher sets.</div></td>
+                </tr>
+                <tr data-row="after" role="row">
+                  <th id="mobile-90-after" scope="row" role="rowheader">After teaching<div class="programme-detail">Teacher notes who missed it</div></th>
+                  <td headers="mobile-90-after mobile-band-90" role="cell"><div class="programme-what">Exit ticket</div><div class="programme-detail">The gaps go into the week's extra lesson.</div></td>
+                </tr>
+                <tr data-row="support" role="row">
+                  <th id="mobile-90-support" scope="row" role="rowheader">Extra support</th>
+                  <td headers="mobile-90-support mobile-band-90" role="cell"><div class="programme-what">An extra group lesson: 1 × 50 or 2 × 25 minutes a week</div><div class="programme-detail">A fixed group, for at least a term. Each week closes the gaps the exit tickets show.</div><span class="programme-by">Teacher</span></td>
+                </tr>
+                <tr data-row="homework" role="row">
+                  <th id="mobile-90-homework" scope="row" role="rowheader">Homework</th>
+                  <td headers="mobile-90-homework mobile-band-90" role="cell"><div class="programme-what">Sparx, as the school sets it</div></td>
+                </tr>
+                <tr data-row="unit" role="row">
+                  <th id="mobile-90-unit" scope="row" role="rowheader">Each unit</th>
+                  <td headers="mobile-90-unit mobile-band-90" role="cell"><div class="programme-what">Maths Lab unit test</div><div class="programme-detail">Section B tests the Securing objectives.</div></td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="programme-band" role="table" aria-labelledby="mobile-band-below">
+              <thead role="rowgroup"><tr role="row">
+                <th id="mobile-band-below" scope="col" colspan="2" role="columnheader">Tier 3<div class="programme-band-range">KS2 below 90</div></th>
+              </tr></thead>
+              <tbody role="rowgroup">
+                <tr data-row="first" role="row">
+                  <th id="mobile-below-first" scope="row" role="rowheader">First</th>
+                  <td headers="mobile-below-first mobile-band-below" role="cell"><div class="programme-what">Starting assessment</div><div class="programme-detail">Finds the gaps; each question names its lesson.</div><span class="programme-by">Teacher</span></td>
+                </tr>
+                <tr data-row="class" role="row">
+                  <th id="mobile-below-class" scope="row" role="rowheader">In class</th>
+                  <td headers="mobile-below-class mobile-band-below" role="cell"><div class="programme-app programme-what classroom">Maths Lab Classroom</div><div class="programme-detail">Developing.</div></td>
+                </tr>
+                <tr data-row="after" role="row">
+                  <th id="mobile-below-after" scope="row" role="rowheader">After teaching<div class="programme-detail">Teacher notes who missed it</div></th>
+                  <td headers="mobile-below-after mobile-band-below" role="cell"><div class="programme-what">Exit ticket</div><div class="programme-detail">Gaps picked up next lesson.</div></td>
+                </tr>
+                <tr data-row="support" role="row">
+                  <th id="mobile-below-support" scope="row" role="rowheader">Extra support</th>
+                  <td headers="mobile-below-support mobile-band-below" role="cell"><div class="programme-what">Small groups: the step-back plan in <span class="programme-app catchup">Maths Lab Catch-up</span></div><div class="programme-detail">A fixed group, for at least a term; 25 or 35 minutes. After each: 2 right, next lesson · 1 right, more practice · 0 right, a smaller step.</div><span class="programme-by">TA or peer mentor; teacher sets the lessons</span></td>
+                </tr>
+                <tr data-row="homework" role="row">
+                  <th id="mobile-below-homework" scope="row" role="rowheader">Homework</th>
+                  <td headers="mobile-below-homework mobile-band-below" role="cell"><div class="programme-what">Sparx, as the school sets it</div></td>
+                </tr>
+                <tr data-row="unit" role="row">
+                  <th id="mobile-below-unit" scope="row" role="rowheader">Each unit</th>
+                  <td headers="mobile-below-unit mobile-band-below" role="cell"><div class="programme-what">Maths Lab unit test</div><div class="programme-detail">Section B tests the Securing objectives.</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="programme-arrow" aria-hidden="true">↓</div>
+          <div class="programme-step">
+            <h2>End of each term</h2>
+            <p>Groups reviewed: watched pupils can join; after at least a term, pupils can leave. Classes stay.</p>
+            <p class="programme-who">Head of department</p>
+          </div>
+          <div class="programme-arrow" aria-hidden="true">↓</div>
+          <div class="programme-step">
+            <h2>End of Year 7</h2>
+            <p>Tiers 2 and 3: 70% in section B over the year = caught up for your school’s Year 8 lessons. Classes re-set.</p>
+            <p class="programme-who">Head of department</p>
+          </div>
+          <h2 class="programme-section-title">Who does what</h2>
+          <div class="programme-roles">
+            <article>
+              <h3>Head of department</h3>
+              <ul><li>Sorts pupils, sets classes</li><li>Reviews the groups each term</li><li>Decides at the end of the year</li></ul>
+            </article>
+            <article>
+              <h3>Teacher</h3>
+              <ul><li>Teaches the class</li><li>Runs the Tier 2 extra lesson; chooses its gaps each week</li><li>Sets the Tier 3 lessons; reads the TA's notes</li></ul>
+            </article>
+            <article>
+              <h3>TA or peer mentor</h3>
+              <ul><li>Teaches the Tier 3 small groups</li><li>Records each session's exit ticket in Catch-up</li><li>Flags a pupil who is stuck</li></ul>
+            </article>
+          </div>
+          <h2 class="guide-help-title">Using the apps</h2>
+          <ol class="guide-help">
+            <li>
+              <h3>1. Set up provision</h3>
+              <p>In Catch-up's Plan, use Add pupils or Manage pupils and groups, then select pupils and their tier. Use Check → Tests for the Tier 2 readiness paper, and First assessment for Tier 3. Keep support groups for at least a term.</p>
+            </li>
+            <li>
+              <h3>2. Plan and teach</h3>
+              <p>Tier 2: choose the Classroom lesson, tick one or two linked support lessons, then Set for the group. Tier 3: record each pupil's assessment gaps, review the proposed sequence, then Set plan. The TA or peer mentor opens Teach and records the exit ticket and help needed.</p>
+            </li>
+            <li>
+              <h3>3. Review the support</h3>
+              <p>Use Classroom's Weekly sheet to note missed exit tickets. Three misses prompt closer monitoring. Review groups termly, mainly using unit tests; classes stay fixed for the year. Use section B across the year for the agreed Year 8 decision.</p>
+            </li>
+          </ol>
+          <p class="guide-explanation">Catch-up keeps pupil records in the browser you use. In Records, use Save a backup to keep a copy. Open a backup replaces the records on screen with that copy.</p>
+          <a class="guide-action" href="#using">Instructions for your role →</a>
+        </section>
+
+        <section data-page="thresholds" aria-labelledby="thresholds-title" hidden>
+          <h1 id="thresholds-title" tabindex="-1">Threshold concepts</h1>
+          <p class="page-intro">Threshold concepts are key mathematical ideas that many later lessons build on, such as place value, equal groups and inverse relationships. A gap here can affect several topics. Address the gap while the pupil continues with the class unit.</p>
+          <ol class="guide-help threshold-help" aria-label="How to use the threshold map">
+            <li>
+              <h3>1. Find the idea</h3>
+              <p>Choose the current unit below, then open a concept. Read its explanation and note the lesson titles and codes that teach it.</p>
+            </li>
+            <li>
+              <h3>2. Check the gap</h3>
+              <p>Use assessment responses, Get ready and class work to check understanding. Consider the pupil's explanation and any help needed, as well as their answer.</p>
+            </li>
+            <li>
+              <h3>3. Teach and revisit</h3>
+              <p>Use Catch-up → Plan to select the pupil and set suitable lessons. Teach with the pictures and Show it; record the exit ticket, then revisit the idea in a later or mid-point check.</p>
+            </li>
+          </ol>
+          <p class="guide-explanation">This map shows what the lessons teach. Review each pupil's evidence in Catch-up; Preview opens a lesson, and Set saves the plan.</p>
+          <div id="threshold-units" class="unit-strip" role="group" aria-label="Threshold concepts by unit"></div>
+          <div id="threshold-detail" class="unit-detail"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="publication-credit"><p>© AStar Consulting Ltd 2026</p><p>Oak resources: A maths lesson by <a href="https://www.thenational.academy/" target="_blank" rel="noopener">Oak National Academy</a> licensed under <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence (OGL)</a>. Third-party credits remain with their resources. Maths Lab is independently developed and is not endorsed by Oak.</p></footer>
+  <noscript><p class="no-script">The three apps open from the links above. Turn on JavaScript to view How Maths Lab works.</p></noscript>
+  <script id="home-data" type="application/json">{"units":[{"n":1,"name":"Place value, decimals and scaling","built":true,"blocks":[{"block":"A","title":"The place-value chart","lessons":[{"id":"Y7-303","n":1,"title":"Millions to ones"},{"id":"Y7-304","n":2,"title":"Tenths, hundredths, thousandths"},{"id":"Y7-305","n":3,"title":"Ten-thousandths, and zeros that matter"}]},{"block":"B","title":"Powers of ten name the columns","lessons":[{"id":"Y7-306","n":4,"title":"Powers of ten: 10⁰ to 10⁵"},{"id":"Y7-307","n":5,"title":"Negative powers: keep dividing by ten"}]},{"block":"C","title":"The digits move, the point stays","lessons":[{"id":"Y7-308","n":6,"title":"Multiply by 10, 100 and 1,000"},{"id":"Y7-309","n":7,"title":"Divide by 10, 100 and 1,000, and undo"},{"id":"Y7-310","n":8,"title":"Multiply and divide: which way?"},{"id":"Y7-311","n":9,"title":"Multiply by 0.1: one tenth of"},{"id":"Y7-312","n":10,"title":"Divide by 0.1: how many tenths? Which way?"}]},{"block":"D","title":"How big is it?","lessons":[{"id":"Y7-313","n":11,"title":"Zoom in: the number line"},{"id":"Y7-314","n":12,"title":"Compare and order"}]},{"block":"E","title":"Measures","lessons":[{"id":"Y7-315","n":13,"title":"Pounds and pence"},{"id":"Y7-316","n":14,"title":"Metric units on the chart"},{"id":"Y7-317","n":15,"title":"Sixty, not a hundred"},{"id":"Y7-318","n":16,"title":"Minutes back to hours"}]},{"block":"S","title":"Securing","lessons":[{"id":"Y7-376","n":17,"title":"Read decimals to millionths"},{"id":"Y7-377","n":18,"title":"Scale by wider powers of ten"}]}],"concepts":[{"n":1,"name":"Part and whole, and what equals means","words":"split a number into parts, \"the same value on both sides\", find the missing number","lessons":[{"id":"Y7-005","title":"Split the whole","code":"Y7-005"},{"id":"Y7-009","title":"Same value, both sides","code":"Y7-009"},{"id":"Y7-010","title":"Find the missing number","code":"Y7-010"},{"id":"Y7-374","title":"Full hours and minutes left","code":"Unit 1 step-back · Y7-374"}]},{"n":2,"name":"Place value","words":"a digit's value depends on its column, ten of one make one of the next, zero holds a place","lessons":[{"id":"Y7-016","title":"Tens and ones","code":"Y7-016"},{"id":"Y7-017","title":"Same number, new parts","code":"Y7-017"},{"id":"Y7-019","title":"Tens hiding in hundreds","code":"Y7-019"},{"id":"Y7-020","title":"Zero holds a place","code":"Y7-020"},{"id":"Y7-021","title":"The exchange workshop","code":"Y7-021"},{"id":"Y7-024","title":"Four places, one number","code":"Y7-024"},{"id":"Y7-025","title":"The thousand exchange","code":"Y7-025"},{"id":"Y7-367","title":"Tens multiplied together","code":"Unit 1 step-back · Y7-367"},{"id":"Y7-371","title":"Compare from the left","code":"Unit 1 step-back · Y7-371"},{"id":"Y7-372","title":"Whole pounds and pence left","code":"Unit 1 step-back · Y7-372"}]},{"n":3,"name":"Equal groups","words":"multiplication as repeated groups, division as grouping and as sharing","lessons":[{"id":"Y7-041","title":"Equal groups, one total","code":"Y7-041"},{"id":"Y7-042","title":"How many groups?","code":"Y7-042"},{"id":"Y7-043","title":"Sharing or grouping?","code":"Y7-043"},{"id":"Y7-044","title":"Choose the operation","code":"Y7-044"},{"id":"Y7-370","title":"How many tenths?","code":"Unit 1 step-back · Y7-370"},{"id":"Y7-373","title":"Hours into minutes","code":"Unit 1 step-back · Y7-373"},{"id":"Y7-374","title":"Full hours and minutes left","code":"Unit 1 step-back · Y7-374"}]},{"n":4,"name":"Times-table facts and the division facts that go with them","words":"(a times table has no end)","lessons":[{"id":"Y7-045","title":"Link the 2, 5 and 10 tables","code":"Y7-045"},{"id":"Y7-046","title":"Double twos to make fours","code":"Y7-046"},{"id":"Y7-047","title":"Double fours to make eights","code":"Y7-047"},{"id":"Y7-048","title":"Connect threes and sixes","code":"Y7-048"},{"id":"Y7-049","title":"Nines from tens","code":"Y7-049"},{"id":"Y7-050","title":"Build the seven table","code":"Y7-050"},{"id":"Y7-051","title":"Elevens and twelves","code":"Y7-051"},{"id":"Y7-052","title":"Keep facts connected","code":"Y7-052"},{"id":"Y7-373","title":"Hours into minutes","code":"Unit 1 step-back · Y7-373"}]},{"n":5,"name":"Scaling by 10, 100 and 1,000","words":"the digits move, the point stays","lessons":[{"id":"Y7-053","title":"Ten times, one hundred times","code":"Y7-053"},{"id":"Y7-054","title":"Divide by ten and one hundred","code":"Y7-054"},{"id":"Y7-103","title":"Decimals times 10 and 100","code":"Y7-103"},{"id":"Y7-104","title":"Decimals divided by 10 and 100","code":"Y7-104"},{"id":"Y7-068","title":"Scale a known fact","code":"Y7-068"},{"id":"Y7-175","title":"Times and divide by one thousand","code":"Y7-175"},{"id":"Y7-367","title":"Tens multiplied together","code":"Unit 1 step-back · Y7-367"},{"id":"Y7-368","title":"Bigger or smaller?","code":"Unit 1 step-back · Y7-368"},{"id":"Y7-369","title":"One tenth of a number","code":"Unit 1 step-back · Y7-369"}]},{"n":7,"name":"Inverse relationships and fact families","words":"undoing an operation, related facts","lessons":[{"id":"Y7-035","title":"Equation detectives","code":"Y7-035"},{"id":"Y7-055","title":"Find the missing value","code":"Y7-055"},{"id":"Y7-368","title":"Bigger or smaller?","code":"Unit 1 step-back · Y7-368"}]},{"n":8,"name":"Fractions as equal parts of a whole and as points on a line; equivalence","words":"","lessons":[{"id":"Y7-071","title":"One whole, equal parts","code":"Y7-071"},{"id":"Y7-072","title":"Name the shaded fraction","code":"Y7-072"},{"id":"Y7-073","title":"Unit fractions on a line","code":"Y7-073"},{"id":"Y7-074","title":"Count fractional intervals","code":"Y7-074"},{"id":"Y7-080","title":"Different names, same fraction","code":"Y7-080"},{"id":"Y7-081","title":"Scale equivalent fractions","code":"Y7-081"},{"id":"Y7-369","title":"One tenth of a number","code":"Unit 1 step-back · Y7-369"},{"id":"Y7-373","title":"Hours into minutes","code":"Unit 1 step-back · Y7-373"},{"id":"Y7-374","title":"Full hours and minutes left","code":"Unit 1 step-back · Y7-374"}]},{"n":9,"name":"Decimals as tenths and hundredths on the same chart","words":"","lessons":[{"id":"Y7-096","title":"One whole, ten tenths","code":"Y7-096"},{"id":"Y7-097","title":"Hundredths and exchanges","code":"Y7-097"},{"id":"Y7-098","title":"Read and partition decimals","code":"Y7-098"},{"id":"Y7-099","title":"Different decimal partitions","code":"Y7-099"},{"id":"Y7-100","title":"Decimals on the line","code":"Y7-100"},{"id":"Y7-101","title":"Between which wholes and tenths?","code":"Y7-101"},{"id":"Y7-369","title":"One tenth of a number","code":"Unit 1 step-back · Y7-369"},{"id":"Y7-370","title":"How many tenths?","code":"Unit 1 step-back · Y7-370"},{"id":"Y7-371","title":"Compare from the left","code":"Unit 1 step-back · Y7-371"},{"id":"Y7-372","title":"Whole pounds and pence left","code":"Unit 1 step-back · Y7-372"}]}]},{"n":2,"name":"Factors, multiples and powers","built":true,"blocks":[{"block":"A","title":"Multiples and divisibility","lessons":[{"id":"Y7-319","n":1,"title":"Multiples: in the tables and beyond"},{"id":"Y7-320","n":2,"title":"Divisible by 2, 5 and 10: the last digit decides"},{"id":"Y7-321","n":3,"title":"Divisible by 3 and 9: add the digits"},{"id":"Y7-322","n":4,"title":"Divisible by 4 and 6, and which test?"}]},{"block":"B","title":"Squares, cubes and roots","lessons":[{"id":"Y7-323","n":5,"title":"Square numbers: arrays and the raised 2"},{"id":"Y7-324","n":6,"title":"Cube numbers, and powers of 2"},{"id":"Y7-325","n":7,"title":"Square roots undo squaring"},{"id":"Y7-326","n":8,"title":"Cube roots, and which root?"}]},{"block":"C","title":"Factors and primes","lessons":[{"id":"Y7-327","n":9,"title":"Factor pairs: find every factor"},{"id":"Y7-328","n":10,"title":"Prime numbers"},{"id":"Y7-329","n":11,"title":"Factor trees: split until every leaf is prime"},{"id":"Y7-330","n":12,"title":"Any start, same primes; powers in the answer"},{"id":"Y7-331","n":13,"title":"Is it a factor? Use the prime factors"}]},{"block":"D","title":"HCF and LCM","lessons":[{"id":"Y7-332","n":14,"title":"Highest common factor, by listing factors"},{"id":"Y7-333","n":15,"title":"Lowest common multiple, by listing; HCF or LCM?"}]},{"block":"S","title":"Securing","lessons":[{"id":"Y7-378","n":16,"title":"Find the HCF using prime factors"},{"id":"Y7-379","n":17,"title":"Find the LCM using prime factors"}]}],"concepts":[{"n":3,"name":"Equal groups","words":"multiplication as repeated groups, division as grouping and as sharing","lessons":[{"id":"Y7-041","title":"Equal groups, one total","code":"Y7-041"},{"id":"Y7-042","title":"How many groups?","code":"Y7-042"},{"id":"Y7-043","title":"Sharing or grouping?","code":"Y7-043"},{"id":"Y7-044","title":"Choose the operation","code":"Y7-044"}]},{"n":4,"name":"Times-table facts and the division facts that go with them","words":"(a times table has no end)","lessons":[{"id":"Y7-045","title":"Link the 2, 5 and 10 tables","code":"Y7-045"},{"id":"Y7-046","title":"Double twos to make fours","code":"Y7-046"},{"id":"Y7-047","title":"Double fours to make eights","code":"Y7-047"},{"id":"Y7-048","title":"Connect threes and sixes","code":"Y7-048"},{"id":"Y7-049","title":"Nines from tens","code":"Y7-049"},{"id":"Y7-050","title":"Build the seven table","code":"Y7-050"},{"id":"Y7-051","title":"Elevens and twelves","code":"Y7-051"},{"id":"Y7-052","title":"Keep facts connected","code":"Y7-052"}]},{"n":7,"name":"Inverse relationships and fact families","words":"undoing an operation, related facts","lessons":[{"id":"Y7-035","title":"Equation detectives","code":"Y7-035"},{"id":"Y7-055","title":"Find the missing value","code":"Y7-055"}]}]},{"n":3,"name":"Signed numbers and calculating","built":true,"blocks":[{"block":"A","title":"Directed numbers","lessons":[{"id":"Y7-334","n":1,"title":"Below zero: compare and order on the line"},{"id":"Y7-335","n":2,"title":"Add with counters: zero pairs"},{"id":"Y7-336","n":3,"title":"Subtract with counters: take away, and add zero pairs when you need more"},{"id":"Y7-337","n":4,"title":"Subtract a negative: add the opposite"},{"id":"Y7-338","n":5,"title":"Multiply directed numbers"},{"id":"Y7-339","n":6,"title":"Divide directed numbers"}]},{"block":"B","title":"Decimals in columns, and the laws","lessons":[{"id":"Y7-340","n":7,"title":"Add decimals: line up the points"},{"id":"Y7-341","n":8,"title":"Subtract decimals: exchange, even across a zero"},{"id":"Y7-342","n":9,"title":"Swap and regroup: the commutative and associative laws"}]},{"block":"C","title":"Multiply: scale and split","lessons":[{"id":"Y7-343","n":10,"title":"Multiply multiples of 10, 100 and 1,000"},{"id":"Y7-344","n":11,"title":"Divide multiples of 10, 100 and 1,000"},{"id":"Y7-345","n":12,"title":"The grid: split one number, multiply every part"},{"id":"Y7-346","n":13,"title":"The two-row grid: two digits by two digits"},{"id":"Y7-347","n":14,"title":"Estimate first, then calculate"}]},{"block":"D","title":"Decimals, factors and the Calculation priorities and brackets","lessons":[{"id":"Y7-348","n":15,"title":"Multiply decimals: make them whole, then scale back"},{"id":"Y7-349","n":16,"title":"Divide a decimal by a whole number: the bus stop"},{"id":"Y7-350","n":17,"title":"Factorise to multiply and divide"},{"id":"Y7-351","n":18,"title":"Calculation priorities and brackets: brackets, then × and ÷, then + and −"}]},{"block":"S","title":"Securing","lessons":[{"id":"Y7-380","n":19,"title":"Multiply hundredths by hundredths"},{"id":"Y7-381","n":20,"title":"Divide by a decimal"}]}],"concepts":[{"n":1,"name":"Part and whole, and what equals means","words":"split a number into parts, \"the same value on both sides\", find the missing number","lessons":[{"id":"Y7-005","title":"Split the whole","code":"Y7-005"},{"id":"Y7-009","title":"Same value, both sides","code":"Y7-009"},{"id":"Y7-010","title":"Find the missing number","code":"Y7-010"}]},{"n":2,"name":"Place value","words":"a digit's value depends on its column, ten of one make one of the next, zero holds a place","lessons":[{"id":"Y7-016","title":"Tens and ones","code":"Y7-016"},{"id":"Y7-017","title":"Same number, new parts","code":"Y7-017"},{"id":"Y7-019","title":"Tens hiding in hundreds","code":"Y7-019"},{"id":"Y7-020","title":"Zero holds a place","code":"Y7-020"},{"id":"Y7-021","title":"The exchange workshop","code":"Y7-021"},{"id":"Y7-024","title":"Four places, one number","code":"Y7-024"},{"id":"Y7-025","title":"The thousand exchange","code":"Y7-025"}]},{"n":3,"name":"Equal groups","words":"multiplication as repeated groups, division as grouping and as sharing","lessons":[{"id":"Y7-041","title":"Equal groups, one total","code":"Y7-041"},{"id":"Y7-042","title":"How many groups?","code":"Y7-042"},{"id":"Y7-043","title":"Sharing or grouping?","code":"Y7-043"},{"id":"Y7-044","title":"Choose the operation","code":"Y7-044"}]},{"n":4,"name":"Times-table facts and the division facts that go with them","words":"(a times table has no end)","lessons":[{"id":"Y7-045","title":"Link the 2, 5 and 10 tables","code":"Y7-045"},{"id":"Y7-046","title":"Double twos to make fours","code":"Y7-046"},{"id":"Y7-047","title":"Double fours to make eights","code":"Y7-047"},{"id":"Y7-048","title":"Connect threes and sixes","code":"Y7-048"},{"id":"Y7-049","title":"Nines from tens","code":"Y7-049"},{"id":"Y7-050","title":"Build the seven table","code":"Y7-050"},{"id":"Y7-051","title":"Elevens and twelves","code":"Y7-051"},{"id":"Y7-052","title":"Keep facts connected","code":"Y7-052"}]},{"n":5,"name":"Scaling by 10, 100 and 1,000","words":"the digits move, the point stays","lessons":[{"id":"Y7-053","title":"Ten times, one hundred times","code":"Y7-053"},{"id":"Y7-054","title":"Divide by ten and one hundred","code":"Y7-054"},{"id":"Y7-103","title":"Decimals times 10 and 100","code":"Y7-103"},{"id":"Y7-104","title":"Decimals divided by 10 and 100","code":"Y7-104"},{"id":"Y7-068","title":"Scale a known fact","code":"Y7-068"},{"id":"Y7-175","title":"Times and divide by one thousand","code":"Y7-175"}]},{"n":6,"name":"Bridging ten and two-digit mental methods","words":"","lessons":[{"id":"Y7-011","title":"Make ten, then add","code":"Y7-011"},{"id":"Y7-012","title":"Back through ten","code":"Y7-012"},{"id":"Y7-028","title":"Small steps, same places","code":"Y7-028"},{"id":"Y7-029","title":"Cross the boundary","code":"Y7-029"},{"id":"Y7-030","title":"Put the parts together","code":"Y7-030"},{"id":"Y7-031","title":"Choose your subtraction route","code":"Y7-031"}]},{"n":7,"name":"Inverse relationships and fact families","words":"undoing an operation, related facts","lessons":[{"id":"Y7-035","title":"Equation detectives","code":"Y7-035"},{"id":"Y7-055","title":"Find the missing value","code":"Y7-055"}]},{"n":9,"name":"Decimals as tenths and hundredths on the same chart","words":"","lessons":[{"id":"Y7-096","title":"One whole, ten tenths","code":"Y7-096"},{"id":"Y7-097","title":"Hundredths and exchanges","code":"Y7-097"},{"id":"Y7-098","title":"Read and partition decimals","code":"Y7-098"},{"id":"Y7-099","title":"Different decimal partitions","code":"Y7-099"},{"id":"Y7-100","title":"Decimals on the line","code":"Y7-100"},{"id":"Y7-101","title":"Between which wholes and tenths?","code":"Y7-101"}]},{"n":10,"name":"Columns with exchange","words":"","lessons":[{"id":"Y7-036","title":"Column builders","code":"Y7-036"},{"id":"Y7-037","title":"Exchange explorers","code":"Y7-037"},{"id":"Y7-038","title":"Exchange and subtract","code":"Y7-038"},{"id":"Y7-039","title":"Across the zero","code":"Y7-039"}]},{"n":11,"name":"Split a multiplication","words":"partition one number and multiply every part","lessons":[{"id":"Y7-056","title":"Split a multiplication","code":"Y7-056"}]},{"n":12,"name":"Below zero","words":"order negative numbers and count through zero","lessons":[{"id":"Y7-168","title":"Numbers below zero","code":"Y7-168"},{"id":"Y7-169","title":"Count and find gaps across zero","code":"Y7-169"}]}]},{"n":4,"name":"Expressions and relationships","built":true,"blocks":[{"block":"A","title":"A letter for a number","lessons":[{"id":"Y7-352","n":1,"title":"Write it with a letter: n sweets in a bag"},{"id":"Y7-353","n":2,"title":"Say the relationship with a letter: ages"}]},{"block":"B","title":"Put a number in","lessons":[{"id":"Y7-354","n":3,"title":"Substitute: replace the letter, multiply first"},{"id":"Y7-355","n":4,"title":"Function machines, forwards and back"},{"id":"Y7-356","n":5,"title":"Formulas: cost, area, perimeter"}]},{"block":"C","title":"Equal, or not yet?","lessons":[{"id":"Y7-357","n":6,"title":"Expression or equation? Does the number fit?"},{"id":"Y7-358","n":7,"title":"One-step equations: undo it"},{"id":"Y7-359","n":8,"title":"Two-step equations: undo the last step first"},{"id":"Y7-360","n":9,"title":"Collect like terms: add the matching bags"},{"id":"Y7-361","n":10,"title":"Collect like terms: take away, and keep unlike terms apart"},{"id":"Y7-366","n":11,"title":"Like terms: same letter, same power"}]},{"block":"D","title":"Brackets","lessons":[{"id":"Y7-362","n":12,"title":"Expand one bracket: 3 lots of (x + 7)"},{"id":"Y7-363","n":13,"title":"Expand, then collect"},{"id":"Y7-364","n":14,"title":"Factorise: take out the common factor"},{"id":"Y7-365","n":15,"title":"Use it: perimeter, cost and number puzzles"}]}],"concepts":[{"n":1,"name":"Part and whole, and what equals means","words":"split a number into parts, \"the same value on both sides\", find the missing number","lessons":[{"id":"Y7-005","title":"Split the whole","code":"Y7-005"},{"id":"Y7-009","title":"Same value, both sides","code":"Y7-009"},{"id":"Y7-010","title":"Find the missing number","code":"Y7-010"}]},{"n":3,"name":"Equal groups","words":"multiplication as repeated groups, division as grouping and as sharing","lessons":[{"id":"Y7-041","title":"Equal groups, one total","code":"Y7-041"},{"id":"Y7-042","title":"How many groups?","code":"Y7-042"},{"id":"Y7-043","title":"Sharing or grouping?","code":"Y7-043"},{"id":"Y7-044","title":"Choose the operation","code":"Y7-044"}]},{"n":7,"name":"Inverse relationships and fact families","words":"undoing an operation, related facts","lessons":[{"id":"Y7-035","title":"Equation detectives","code":"Y7-035"},{"id":"Y7-055","title":"Find the missing value","code":"Y7-055"}]},{"n":11,"name":"Split a multiplication","words":"partition one number and multiply every part","lessons":[{"id":"Y7-056","title":"Split a multiplication","code":"Y7-056"}]}]},{"n":5,"name":"Plotting points and reading graphs","built":false,"blocks":[],"concepts":[{"n":12,"name":"Below zero","words":"order negative numbers and count through zero","lessons":[{"id":"Y7-168","title":"Numbers below zero","code":"Y7-168"},{"id":"Y7-169","title":"Count and find gaps across zero","code":"Y7-169"}]},{"n":13,"name":"Coordinates in the first quadrant","words":"along, then up","lessons":[{"id":"Y7-153","title":"Coordinates: along, then up","code":"Y7-153"}]}]},{"n":6,"name":"Shapes, boundaries and area","built":false,"blocks":[],"concepts":[]},{"n":7,"name":"Fraction values and calculations","built":false,"blocks":[],"concepts":[{"n":1,"name":"Part and whole, and what equals means","words":"split a number into parts, \"the same value on both sides\", find the missing number","lessons":[{"id":"Y7-005","title":"Split the whole","code":"Y7-005"},{"id":"Y7-009","title":"Same value, both sides","code":"Y7-009"},{"id":"Y7-010","title":"Find the missing number","code":"Y7-010"}]},{"n":3,"name":"Equal groups","words":"multiplication as repeated groups, division as grouping and as sharing","lessons":[{"id":"Y7-041","title":"Equal groups, one total","code":"Y7-041"},{"id":"Y7-042","title":"How many groups?","code":"Y7-042"},{"id":"Y7-043","title":"Sharing or grouping?","code":"Y7-043"},{"id":"Y7-044","title":"Choose the operation","code":"Y7-044"}]},{"n":4,"name":"Times-table facts and the division facts that go with them","words":"(a times table has no end)","lessons":[{"id":"Y7-045","title":"Link the 2, 5 and 10 tables","code":"Y7-045"},{"id":"Y7-046","title":"Double twos to make fours","code":"Y7-046"},{"id":"Y7-047","title":"Double fours to make eights","code":"Y7-047"},{"id":"Y7-048","title":"Connect threes and sixes","code":"Y7-048"},{"id":"Y7-049","title":"Nines from tens","code":"Y7-049"},{"id":"Y7-050","title":"Build the seven table","code":"Y7-050"},{"id":"Y7-051","title":"Elevens and twelves","code":"Y7-051"},{"id":"Y7-052","title":"Keep facts connected","code":"Y7-052"}]},{"n":8,"name":"Fractions as equal parts of a whole and as points on a line; equivalence","words":"","lessons":[{"id":"Y7-071","title":"One whole, equal parts","code":"Y7-071"},{"id":"Y7-072","title":"Name the shaded fraction","code":"Y7-072"},{"id":"Y7-073","title":"Unit fractions on a line","code":"Y7-073"},{"id":"Y7-074","title":"Count fractional intervals","code":"Y7-074"},{"id":"Y7-080","title":"Different names, same fraction","code":"Y7-080"},{"id":"Y7-081","title":"Scale equivalent fractions","code":"Y7-081"}]},{"n":9,"name":"Decimals as tenths and hundredths on the same chart","words":"","lessons":[{"id":"Y7-096","title":"One whole, ten tenths","code":"Y7-096"},{"id":"Y7-097","title":"Hundredths and exchanges","code":"Y7-097"},{"id":"Y7-098","title":"Read and partition decimals","code":"Y7-098"},{"id":"Y7-099","title":"Different decimal partitions","code":"Y7-099"},{"id":"Y7-100","title":"Decimals on the line","code":"Y7-100"},{"id":"Y7-101","title":"Between which wholes and tenths?","code":"Y7-101"}]},{"n":12,"name":"Below zero","words":"order negative numbers and count through zero","lessons":[{"id":"Y7-168","title":"Numbers below zero","code":"Y7-168"},{"id":"Y7-169","title":"Count and find gaps across zero","code":"Y7-169"}]}]},{"n":8,"name":"Ratio, rates and proportion","built":false,"blocks":[],"concepts":[{"n":3,"name":"Equal groups","words":"multiplication as repeated groups, division as grouping and as sharing","lessons":[{"id":"Y7-041","title":"Equal groups, one total","code":"Y7-041"},{"id":"Y7-042","title":"How many groups?","code":"Y7-042"},{"id":"Y7-043","title":"Sharing or grouping?","code":"Y7-043"},{"id":"Y7-044","title":"Choose the operation","code":"Y7-044"}]},{"n":4,"name":"Times-table facts and the division facts that go with them","words":"(a times table has no end)","lessons":[{"id":"Y7-045","title":"Link the 2, 5 and 10 tables","code":"Y7-045"},{"id":"Y7-046","title":"Double twos to make fours","code":"Y7-046"},{"id":"Y7-047","title":"Double fours to make eights","code":"Y7-047"},{"id":"Y7-048","title":"Connect threes and sixes","code":"Y7-048"},{"id":"Y7-049","title":"Nines from tens","code":"Y7-049"},{"id":"Y7-050","title":"Build the seven table","code":"Y7-050"},{"id":"Y7-051","title":"Elevens and twelves","code":"Y7-051"},{"id":"Y7-052","title":"Keep facts connected","code":"Y7-052"}]},{"n":8,"name":"Fractions as equal parts of a whole and as points on a line; equivalence","words":"","lessons":[{"id":"Y7-071","title":"One whole, equal parts","code":"Y7-071"},{"id":"Y7-072","title":"Name the shaded fraction","code":"Y7-072"},{"id":"Y7-073","title":"Unit fractions on a line","code":"Y7-073"},{"id":"Y7-074","title":"Count fractional intervals","code":"Y7-074"},{"id":"Y7-080","title":"Different names, same fraction","code":"Y7-080"},{"id":"Y7-081","title":"Scale equivalent fractions","code":"Y7-081"}]}]},{"n":9,"name":"Moving shapes and scale","built":false,"blocks":[],"concepts":[{"n":13,"name":"Coordinates in the first quadrant","words":"along, then up","lessons":[{"id":"Y7-153","title":"Coordinates: along, then up","code":"Y7-153"}]}]}],"guidance":{"title":"Using Maths Lab","intro":"Start with the Classroom lesson. Use evidence to choose extra teaching, then check what the pupil can do independently.","availability":"Units 1 to 4 are built. Units 5 to 9 are marked To come. Your school's lesson decks are separate from Maths Lab Classroom.","records":"Catch-up saves records in this browser on this device. Use Records → Save a backup regularly. Open a backup restores that copy and replaces the records on screen; save the current copy first. Devices do not synchronise automatically.","roles":[{"id":"teacher","title":"Teacher","summary":"Teach the current unit; choose extra support from the gaps you see.","steps":[{"title":"Choose the class route","text":"Open Classroom → Year overview. Choose Tier 1, 2 or 3, then the current unit. Tier 1 uses selected Developing openers before your school's lessons; Tier 2 uses Developing with Securing when ready; Tier 3 uses Developing."},{"title":"Teach and check","text":"Open a lesson, then Show on the board for Show it, Checkpoints and games. Use the exit ticket and Print the weekly exit-ticket sheet to note gaps. Keep the class moving through the unit."},{"title":"Set the extra teaching","text":"In Catch-up → Plan, select pupils or a group. Tier 2: choose the Classroom lesson, tick one or two linked support lessons, then Set for the group. Use readiness and exit-ticket evidence to choose. Tier 3: record each pupil's wrong starting-assessment questions, edit the proposed steps, then Set plan."},{"title":"Review the evidence","text":"Read session results and help notes in Catch-up. Three missed class exit tickets in a unit means watch closely, not automatic entry to a support group. Review support with the intervention leader."}],"app":"Maths Lab Classroom.html","action":"Open Classroom"},{"id":"head","title":"Head of department","summary":"Set the provision, protect teaching time and review whether pupils are catching up.","steps":[{"title":"Agree the starting routes","text":"Use KS2 scaled scores with the Sparx baseline: Tier 1, 96–99; Tier 2, 90–95; Tier 3, below 90. At 100 or above, pupils follow your school's lessons with no tier. Tiers describe class and support pathways; Securing describes lesson demand."},{"title":"Make the timetable work","text":"Tier 2 has a teacher-led extra group lesson: one 50-minute or two 25-minute sessions each week. Tier 3 uses teacher-set step-back lessons with trained TAs or peer mentors, in 25- or 35-minute sessions. Keep support groups for at least a term."},{"title":"Review each term","text":"Use unit tests, session evidence and staff observations to review support groups. Classes stay fixed through the year. Sparx homework follows the school's arrangements."},{"title":"Make the Year 8 decision","text":"For Tiers 2 and 3, the agreed caught-up measure is 70% in section B across the year's unit tests. Review the test records alongside the app; the app does not calculate this annual judgement. Re-set classes for Year 8."}],"app":"Maths Lab Catch-up.html","action":"Open Catch-up"},{"id":"intervention","title":"Intervention leader","summary":"Turn the teacher's decisions into a clear group plan and a reliable teaching routine.","steps":[{"title":"Set up the groups","text":"Catch-up opens on Plan. Use Add pupils or Manage pupils and groups, then select the pupils and their tier. Agree the timetable and who teaches each group."},{"title":"Use the right starting evidence","text":"Use Check → Tests for the Tier 2 readiness paper and First assessment for Tier 3. The teacher confirms the gaps and teaching choices; a tier alone does not diagnose a missing skill."},{"title":"Prepare the next teaching","text":"For Tier 2, select the current Classroom lesson and set its suitable linked support for the group. For Tier 3, review each pupil's assessment-led steps and Set plan. Preview opens a lesson; Set saves the assignment. Keep the Classroom lesson and extra teaching distinct."},{"title":"Follow up and safeguard records","text":"Check that staff record exit tickets and help given. Bring repeated difficulties to the teacher and coordinate the termly review. Use Records → Save a backup regularly, following the school's arrangements for pupil information."}],"app":"Maths Lab Catch-up.html","action":"Open Plan"},{"id":"ta","title":"TA","summary":"Teach the planned small step, then record what the pupil can do without help.","steps":[{"title":"Prepare the assigned lesson","text":"Open Catch-up → Teach, choose the pupil and open the planned lesson. Read the adult guidance and prepare the printed pages or counters. Ask the teacher if no plan is set."},{"title":"Model, then work together","text":"Use Get ready to check the starting point. Start Build the idea with the counters or manipulative, then connect the picture to the numbers. Explain the Teacher example and work through We do together, using the lesson's vocabulary."},{"title":"Let the pupil take over","text":"Check the two You try questions before independent practice, then include Apply in the core session. Ask the pupil to explain or show their thinking. Use More practice when Practice was slow or shaky, and in a 35-minute slot. Do not complete answers for the pupil."},{"title":"Record and report","text":"Give the exit ticket independently, then record the result and help needed. Follow the next-step guidance and flag a pupil who remains stuck. The teacher remains responsible for the pupil's plan."}],"app":"Maths Lab Catch-up.html","action":"Open Catch-up"},{"id":"mentor","title":"Peer mentor","summary":"Follow the teacher's plan and help the pupil explain their own thinking.","steps":[{"title":"Get ready with the teacher","text":"Rehearse work already introduced by a trained adult, using the teacher's training and supervision. Open Catch-up ? Teach and the assigned pupil's lesson. Check the adult notes and materials before the session."},{"title":"Show one step clearly","text":"Use the lesson picture or counters. Model the Teacher example, then ask the pupil to take part in We do. Give time to think and use the lesson's vocabulary."},{"title":"Listen before helping","text":"Ask the pupil to show how they know. Use the provided prompts or Help; avoid giving the answer. If the lesson is too difficult, tell the teacher rather than choosing a new programme yourself."},{"title":"Finish with an independent check","text":"Let the pupil attempt the exit ticket without mathematical hints, keeping agreed reading or access support. Note the result and help used, then give it to the supervising adult to confirm marking and manage the records. Pass on any concern."}],"app":"Maths Lab Catch-up.html","action":"Open Catch-up"}],"routine":[{"title":"Check the starting point","text":"Get ready retrieves prerequisites. Notice the pupil's explanation and help needed; use this to decide what needs revisiting."},{"title":"Make the idea visible","text":"Build the idea links a picture or manipulative to the mathematics. Keep pupil wording short; use the fuller adult notes to explain."},{"title":"Model and share the work","text":"Teacher example shows the method; We do uses the same structure with different numbers. Connect each written step to the representation."},{"title":"Release responsibility","text":"Check the two You try questions before independent practice. Draw attention to useful patterns in connected questions. More practice reduces the scaffolding where the lesson is designed to do so."},{"title":"Check and revisit","text":"Use a fresh exit ticket independently and record help honestly. Revisit learning through later checks; pack later reviews are intended at least a fortnight after the check. Securing extends the topic when pupils are ready."}],"methods":[{"unit":1,"topic":"Place value and powers of ten","model":"A labelled place-value chart and circular counters.","teach":"Read each counter's value, combine equal values and exchange ten for one in the next column. Link counters to digits. When multiplying or dividing by powers of ten, move the digits between columns; the decimal point stays fixed.","check":"Ask which value changed and how the chart shows it. Include zero placeholders and decimals when the lesson calls for them.","source":"Unit 1, Blocks A to C; unit1_content.py"},{"unit":1,"topic":"Number lines, measures and time","model":"Number lines, labelled conversion relationships, clocks, time strips and ratio tables.","teach":"On a number line: count the gaps, find what one gap is worth, then find the number. For measures, identify the units before converting. Connect time strips or double number lines to the matching ratio table; use the clock to distinguish elapsed time from a time of day.","check":"Ask the pupil to explain the size and unit of one interval, and whether the answer is sensible.","source":"Unit 1, Blocks D and E; COURSE_STANDARD.md D21"},{"unit":2,"topic":"Multiples, factors and primes","model":"Equal groups, arrays, ordered factor pairs and lists.","teach":"Connect multiplication facts to rows that fill exactly. List factor pairs from 1 × the number and factors in ascending order. Use lists to establish common factors and multiples before the more compressed methods.","check":"Ask why a number belongs in the list, and how the pupil knows the factor list is complete. Distinguish a factor from a multiple.","source":"Unit 2, Blocks A to D; unit2_content.py"},{"unit":2,"topic":"Powers, roots, HCF and LCM","model":"Square and cube models; prime-factor trees and cards; Venn diagrams of factors.","teach":"Link powers and roots to their square or cube model. Use factor lists and their Venn diagram to identify common factors. For prime-factor methods, retain repeated primes and explain the shared and unshared cards before writing a product. Keep listing available as an earlier step.","check":"Ask what each factor represents and why the chosen product gives the HCF or LCM. Avoid treating the diagram as an unexplained rule.","source":"Unit 2 powers/roots and factor lessons; Classroom Securing lessons"},{"unit":3,"topic":"Directed numbers","model":"A number line and signed circular counters, including zero pairs.","teach":"Connect a positive and a negative counter to zero. Build and remove groups using the lesson's counter model, linking each action to the calculation. Use the authored patterns to connect multiplication and division signs.","check":"Ask the pupil to show what is being added, taken away or grouped. Check that the representation agrees with the written signs.","source":"Unit 3, Lessons 1 to 6; unit3_content.py"},{"unit":3,"topic":"Written calculation and decimals","model":"Labelled place-value columns, exchanges and multiplication grids.","teach":"Align like place values in addition and subtraction. Explain each exchange using counters or the chart. Partition factors in the grid and connect the partial products to the written method. Use the lesson's scaling relationships for decimal calculations.","check":"Estimate the size of the result, explain the place value of a written digit and use an inverse check where appropriate.","source":"Unit 3 calculation lessons; unit3_content.py"},{"unit":4,"topic":"Expressions and substitution","model":"Bags of sweets, loose counters and working frames.","teach":"Start with numbers, then let a letter stand for the number of sweets in a bag. Connect repeated equal bags to a coefficient; distinguish the number represented from the bag itself. Substitute a value before calculating.","check":"Ask what the letter and each term mean. Check that the pupil combines like quantities and preserves the value of the expression.","source":"Unit 4, Blocks A and B; unit4_content.py; COURSE_STANDARD.md D20"},{"unit":4,"topic":"Equations and brackets","model":"Function machines, a balance and grouped bags or rectangles.","teach":"Connect inverse operations to a machine run backwards and equal operations on both sides of a balance. Show that a multiplier outside a bracket acts on every term inside; connect the grouping to the expanded expression.","check":"Substitute to check a solution or compare two equivalent expressions. Ask why equality is preserved at each step.","source":"Unit 4, Blocks C and D; unit4_content.py"}],"sources":["Project planning/COURSE_STANDARD.md","Project planning/PROGRAMME_FLOW_2026-10-02.md","Project planning/ta-lessons/TA_LESSONS_PLAN_2026-09-27_v3.md","Maths_Lab_Course_Hub/Authoring/intervention/curriculum/year7-units/shared/unit1_content.py","Maths_Lab_Course_Hub/Authoring/intervention/curriculum/year7-units/shared/unit2_content.py","Maths_Lab_Course_Hub/Authoring/intervention/curriculum/year7-units/shared/unit3_content.py","Maths_Lab_Course_Hub/Authoring/intervention/curriculum/year7-units/shared/unit4_content.py","Maths_Lab_Course_Hub/Authoring/intervention/build_delivery_guidance.py"]},"provenance":{"warnings":[]}}</script>
+  <script>(() => {
+  'use strict';
+  const data = JSON.parse(document.getElementById('home-data').textContent);
+  const pages = ['using', 'curriculum', 'flow', 'thresholds', 'methods'];
+  const selected = {curriculum: 1, thresholds: 1};
+  const byId = id => document.getElementById(id);
+  const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
+
+  function selectRole(id) {
+    const role = data.guidance.roles.find(item => item.id === id);
+    if (!role) return;
+    byId('role-choices').querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.role === id)));
+    byId('role-detail').innerHTML = `<h2>${escape(role.title)}</h2><p class="role-summary">${escape(role.summary)}</p><ol class="role-steps">${role.steps.map(step => `<li><h3>${escape(step.title)}</h3><p>${escape(step.text)}</p></li>`).join('')}</ol><a class="guide-action" href="${escape(role.app)}">${escape(role.action)} <span aria-hidden="true">→</span></a>`;
+  }
+  byId('using-intro').textContent = data.guidance.intro;
+  byId('guidance-records').textContent = data.guidance.records;
+  byId('guidance-availability').textContent = data.guidance.availability;
+  byId('role-choices').innerHTML = data.guidance.roles.map(role => `<button type="button" data-role="${escape(role.id)}" aria-pressed="false" aria-controls="role-detail">${escape(role.title)}</button>`).join('');
+  byId('role-choices').addEventListener('click', event => {
+    const button = event.target.closest('button[data-role]');
+    if (button) selectRole(button.dataset.role);
+  });
+  selectRole('teacher');
+  byId('method-routine').innerHTML = data.guidance.routine.map(step => `<li><h3>${escape(step.title)}</h3><p>${escape(step.text)}</p></li>`).join('');
+  byId('method-topics').innerHTML = data.guidance.methods.map(method => `<details class="method-topic"><summary><span class="method-unit">Unit ${method.unit}</span>${escape(method.topic)}</summary><div><p><strong>Model:</strong> ${escape(method.model)}</p><p><strong>Teach:</strong> ${escape(method.teach)}</p><p><strong>Check:</strong> ${escape(method.check)}</p></div></details>`).join('');
+
+  function selectUnit(page, number, reveal = false) {
+    selected[page] = number;
+    const unit = data.units.find(u => u.n === number);
+    const prefix = page === 'curriculum' ? 'curriculum' : 'threshold';
+    byId(prefix + '-units').querySelectorAll('button').forEach(button => {
+      button.setAttribute('aria-pressed', String(Number(button.dataset.unit) === number));
+    });
+    const heading = `<h2 tabindex="-1">Unit ${unit.n}${unit.name ? ': ' + escape(unit.name) : ''}</h2>`;
+    if (page === 'curriculum') {
+      byId('curriculum-detail').innerHTML = heading + (unit.built
+        ? `<div class="blocks">${unit.blocks.map(block => `<section class="block"><h3>Block ${escape(block.block)} · ${escape(block.title)}</h3><ol>${block.lessons.map(lesson => `<li class="lesson" data-lesson-id="${escape(lesson.id)}"><span class="lesson-number" aria-label="Lesson ${lesson.n}">${lesson.n}</span><span>${escape(lesson.title)}</span></li>`).join('')}</ol></section>`).join('')}</div>`
+        : '<p>To come</p>');
+    } else {
+      byId('threshold-detail').innerHTML = heading + (unit.concepts.length
+        ? unit.concepts.map(concept => `<details class="concept" data-concept-id="${concept.n}"><summary>${escape(concept.name)}</summary><div class="concept-body"><p class="concept-words">${escape(concept.words)}</p><h3>Step-back lessons that teach this idea</h3><ul>${concept.lessons.map(lesson => `<li data-lesson-id="${escape(lesson.id)}">${escape(lesson.title)}<span class="lesson-code">${escape(lesson.code || lesson.id)}</span></li>`).join('')}</ul></div></details>`).join('')
+        : '<p>No threshold concepts are listed for this unit yet.</p>');
+    }
+    if (reveal) {
+      const title = byId(prefix + '-detail').querySelector('h2');
+      const top = document.querySelector('.guide-bar').getBoundingClientRect().height + 20;
+      title.style.scrollMarginTop = top + 'px';
+      const bounds = title.getBoundingClientRect();
+      if (bounds.top < top || bounds.bottom > innerHeight - 24) title.scrollIntoView({block: 'start'});
+      title.focus({preventScroll: true});
+    }
+  }
+
+  for (const page of ['curriculum', 'thresholds']) {
+    const prefix = page === 'curriculum' ? 'curriculum' : 'threshold';
+    const strip = byId(prefix + '-units');
+    // Give long names room while retaining all nine units in one laptop strip.
+    strip.style.setProperty('--unit-columns', data.units.map(unit =>
+      `${Math.max(9, ...unit.name.split(/\s+/).map(word => word.length)) + 4}fr`).join(' '));
+    strip.innerHTML = data.units.map(unit => `<button class="unit-button" type="button" data-unit="${unit.n}" aria-pressed="false" aria-controls="${prefix}-detail"><span class="unit-number">Unit ${unit.n}</span>${unit.name ? `<span class="unit-name">${escape(unit.name)}</span>` : ''}${page === 'curriculum' ? `<span class="unit-status">${unit.built ? 'Built' : 'To come'}</span>` : ''}</button>`).join('');
+    strip.addEventListener('click', event => {
+      const button = event.target.closest('button[data-unit]');
+      if (button) selectUnit(page, Number(button.dataset.unit), true);
+    });
+    selectUnit(page, selected[page]);
+  }
+
+  function showPage(focus) {
+    const route = location.hash.slice(1);
+    const page = pages.includes(route) ? route : 'home';
+    const home = page === 'home';
+    byId('front-door').hidden = !home;
+    byId('guide').hidden = home;
+    document.querySelectorAll('[data-page]').forEach(section => { section.hidden = section.dataset.page !== page; });
+    document.querySelectorAll('.guide-nav a').forEach(link => {
+      if (link.hash === '#' + page) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    document.title = home ? 'Maths Lab' : `${byId(page + '-title').textContent} · Maths Lab`;
+    window.scrollTo(0, 0);
+    if (focus) byId(home ? 'home-title' : page + '-title').focus({preventScroll: true});
+  }
+  window.addEventListener('hashchange', () => showPage(true));
+  showPage(false);
+})();
+</script>
+</body>
+</html>
